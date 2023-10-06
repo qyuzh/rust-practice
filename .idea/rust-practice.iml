@@ -5,6 +5,7 @@
       <sourceFolder url="file://$MODULE_DIR$/01_mini_redis/examples" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/01_mini_redis/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/00_leetcode_algorithm/src" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
     </content>
     <orderEntry type="inheritedJdk" />

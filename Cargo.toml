@@ -1,5 +1,5 @@
 [workspace]
-members = ["01_mini_redis"]
+members = ["01_mini_redis", "00_leetcode_algorithm"]
 resolver = "2"
 
 [workspace.package]

@@ -13,6 +13,10 @@ impl Db {
     pub fn new() -> Self {
         todo!()
     }
+    
+    pub(crate) fn get(&self, key: &str) -> Option<Bytes> {
+        todo!()
+    }
 }
 
 struct Shared {

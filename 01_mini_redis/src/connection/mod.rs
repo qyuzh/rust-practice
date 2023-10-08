@@ -36,7 +36,7 @@ impl Connection {
         }
     }
 
-    pub async fn write_frame(&mut self) -> io::Result<()> {
+    pub async fn write_frame(&mut self, frame: &Frame) -> io::Result<()> {
         todo!()
     }
 }

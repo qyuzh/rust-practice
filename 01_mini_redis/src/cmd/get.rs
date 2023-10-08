@@ -3,7 +3,7 @@ use crate::db::Db;
 use crate::frame::Frame;
 use crate::parse::Parse;
 
-struct Get {
+pub(crate) struct Get {
     key: String,
 }
 
@@ -16,8 +16,16 @@ impl Get {
         &self.key
     }
 
-    async fn apply(self, db: &Db, dst: &mut Connection) -> crate::Result<()> {
-        todo!()
+    pub(crate) async fn apply(self, db: &Db, dst: &mut Connection) -> crate::Result<()> {
+        let resp = if let Some(v) = db.get(&self.key) {
+            Frame::Bulk(v)
+        } else {
+            Frame::Null
+        };
+        
+        dst.write_frame(&resp).await?;
+        
+        Ok(())
     }
 
     fn into_frame(self) -> Frame {
@@ -26,7 +34,7 @@ impl Get {
 }
 
 impl Get {
-    fn parse_frame(parse: &mut Parse) -> crate::Result<Get> {
+    pub(crate) fn parse_frame(parse: &mut Parse) -> crate::Result<Get> {
         todo!()
     }
 }

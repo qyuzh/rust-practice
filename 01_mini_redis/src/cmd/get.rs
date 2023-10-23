@@ -3,12 +3,12 @@ use crate::db::Db;
 use crate::frame::Frame;
 use crate::parse::Parse;
 
-pub(crate) struct Get {
+pub struct Get {
     key: String,
 }
 
 impl Get {
-    fn new(key: impl ToString) -> Get {
+    pub(crate) fn new(key: impl ToString) -> Get {
         todo!()
     }
 
@@ -28,7 +28,7 @@ impl Get {
         Ok(())
     }
 
-    fn into_frame(self) -> Frame {
+    pub(crate) fn into_frame(self) -> Frame {
         todo!()
     }
 }

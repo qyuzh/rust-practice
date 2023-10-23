@@ -5,7 +5,7 @@ use crate::db::Db;
 use crate::frame::Frame;
 use crate::parse::Parse;
 
-mod get;
+pub mod get;
 
 /// Redis Command is Redis Frame::Array variant according to Redis protocol
 pub enum Command {

@@ -1,6 +1,6 @@
 use std::fmt::{Display, Formatter};
 #[derive(Debug)]
-pub(crate) enum Error {
+pub enum Error {
     EndOfStream,
     Other(crate::Error),
 }

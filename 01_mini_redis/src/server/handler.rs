@@ -19,7 +19,7 @@ impl Handler {
             
             let cmd = Command::from_frame(frame)?;
             
-            cmd.apply(&self.db, &self.connection).await?;
+            // cmd.apply(&self.db, &self.connection).await?;
         }
     }
 }

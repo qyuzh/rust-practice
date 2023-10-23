@@ -11,11 +11,22 @@ pub struct Db {
 
 impl Db {
     pub fn new() -> Self {
-        todo!()
+        let shared = Arc::new(
+            Shared {
+                state: Mutex::new(
+                    State {
+                        entries: HashMap::new()
+                    }
+                )
+            }
+        );
+
+        Db { shared }
     }
-    
+
     pub(crate) fn get(&self, key: &str) -> Option<Bytes> {
-        todo!()
+        let state = self.shared.state.lock().unwrap();
+        state.entries.get(key).map(|e| e.data.clone())
     }
 }
 

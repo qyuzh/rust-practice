@@ -6,6 +6,7 @@ use error::Error;
 
 mod error;
 
+#[derive(Debug)]
 pub enum Frame {
     Simple(String),
     Error(String),
@@ -102,6 +103,10 @@ impl Frame {
             }
             _ => unimplemented!(),
         }
+    }
+
+    pub(crate) fn to_error(&self) -> crate::Error {
+        format!("unexpected frame: {:?}", self).into()
     }
 }
 

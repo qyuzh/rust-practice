@@ -34,11 +34,11 @@ enum Command {
         key: String,
 
         /// Value to set.
-        #[clap(value_parser = bytes_from_str)]
+        #[arg(value_parser = bytes_from_str)]
         value: Bytes,
 
         /// Expire the value after specified amount of time
-        #[clap(value_parser = duration_from_ms_str)]
+        #[arg(value_parser = duration_from_ms_str)]
         expires: Option<Duration>,
     },
 }
@@ -46,41 +46,40 @@ enum Command {
 #[tokio::main(flavor = "current_thread")]
 async fn main() -> mini_redis::Result<()> {
     let cli = Cli::parse();
-
-    let addr = format!("{}:{}", cli.hostname, cli.port);
-    let mut client = Client::connect(&addr).await?;
+    let mut client = Client::connect(&format!("{}:{}", cli.hostname, cli.port)).await?;
 
     match cli.command {
-        Command::Get { key, } => {
+        Command::Get {
+            key,
+        } => {
             print!("Get \"{key}\":...");
             if let Some(value) = client.get(&key).await? {
-                if let Ok(string) = std::str::from_utf8(&value) {
-                    println!("\"{}\"", string);
+                if let Ok(str) = std::str::from_utf8(&value) {
+                    println!("\"{}\"", str);
                 } else {
                     println!("{:?}", value);
                 }
             } else {
-                println!("Nil: (nil)");
+                println!("(nil)");
             }
         }
         Command::Set {
             key,
             value,
-            expires: None,
+            expires,
         } => {
             print!("Set \"{key}:{}\"...", std::str::from_utf8(&value)?);
-            client.set(&key, value).await?;
+            client.set(&key, value, expires).await?;
             println!("OK");
         }
-        _ => {}
     }
 
     Ok(())
 }
 
 fn duration_from_ms_str(src: &str) -> Result<Duration, ParseIntError> {
-    let ms = src.parse::<i64>()?;
-    Ok(Duration::from_millis(ms as u64))
+    let ms = src.parse::<u64>()?;
+    Ok(Duration::from_millis(ms))
 }
 
 fn bytes_from_str(src: &str) -> Result<Bytes, Infallible> {

@@ -25,7 +25,7 @@ impl Db {
         Db { shared }
     }
 
-    pub(crate) fn get(&self, key: &str) -> Option<Bytes> {
+    pub fn get(&self, key: &str) -> Option<Bytes> {
         let state = self.shared.state.lock().unwrap();
         state.entries.get(key).map(|e| e.data.clone())
     }

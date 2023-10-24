@@ -1,4 +1,5 @@
 use std::io::ErrorKind;
+use std::time::Duration;
 
 use bytes::Bytes;
 use tokio::net::{TcpStream, ToSocketAddrs};
@@ -30,8 +31,8 @@ impl Client {
         }
     }
 
-    pub async fn set(&mut self, key: &str, value: Bytes) -> crate::Result<()> {
-        self.set_cmd(Set::new(key, value, None)).await
+    pub async fn set(&mut self, key: &str, value: Bytes, expire: Option<Duration>) -> crate::Result<()> {
+        self.set_cmd(Set::new(key, value, expire)).await
     }
 }
 
@@ -52,7 +53,7 @@ impl Client {
         let frame = cmd.into_frame();
         self.connection.write_frame(&frame).await?;
         match self.read_response().await? {
-            Frame::Simple(response) if response == "OK" => Ok(()),
+            Frame::Simple(resp) if resp == "OK" => Ok(()),
             frame => Err(frame.to_error()),
         }
     }

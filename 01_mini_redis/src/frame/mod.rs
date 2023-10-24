@@ -17,10 +17,6 @@ pub enum Frame {
 }
 
 impl Frame {
-    pub(crate) fn array() -> Frame {
-        Frame::Array(vec![])
-    }
-
     pub fn check(src: &mut Cursor<&[u8]>) -> Result<(), Error> {
         match get_u8(src)? {
             // simple strings `+OK\r\n`
@@ -110,6 +106,10 @@ impl Frame {
 }
 
 impl Frame {
+    pub(crate) fn array() -> Frame {
+        Frame::Array(vec![])
+    }
+    
     pub(crate) fn push_bulk(&mut self, bytes: Bytes) {
         match self {
             Frame::Array(vec) => {

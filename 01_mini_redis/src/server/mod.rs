@@ -10,8 +10,6 @@ mod listener;
 
 mod handler;
 
-const MAX_CONNECTIONS: usize = 256;
-
 pub async fn run(listener: TcpListener, shutdown: impl Future) {
     let mut server = Listener {
         db: Db::new(),

@@ -1,5 +1,6 @@
 use std::collections::HashMap;
 use std::sync::{Arc, Mutex};
+use std::time::Duration;
 
 use bytes::Bytes;
 use tokio::time::Instant;
@@ -27,6 +28,24 @@ impl Db {
     pub(crate) fn get(&self, key: &str) -> Option<Bytes> {
         let state = self.shared.state.lock().unwrap();
         state.entries.get(key).map(|e| e.data.clone())
+    }
+    
+    pub fn set(&self, key: String, value: Bytes, expire: Option<Duration>) {
+        let mut state = self.shared.state.lock().unwrap();
+        let expires_at = expire.map(|duration| {
+            let when = Instant::now() + duration;
+            when
+        });
+
+        let _prev = state.entries.insert(
+            key.clone(),
+            Entry {
+                data: value,
+                expires_at,
+            },
+        );
+        
+        // drop(state);
     }
 }
 

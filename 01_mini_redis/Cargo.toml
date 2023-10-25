@@ -14,3 +14,4 @@ path = "src/bin/server.rs"
 tokio = { version = "1", features = ["full"] }
 bytes = "1"
 atoi = "2"
+clap = { version = "4.4.6", features = ["derive"] }

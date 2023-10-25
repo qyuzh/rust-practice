@@ -2,35 +2,33 @@ use std::net::SocketAddr;
 use std::time::Duration;
 
 use tokio::net::{TcpListener, TcpStream};
-use crate::connection::Connection;
 
-use crate::db::Db;
+use crate::connection::Connection;
+use crate::db::{Db, DbDropGuard};
 
 use super::handler::Handler;
 
 pub struct Listener {
-    pub db: Db,
+    pub db_holder: DbDropGuard,
     pub listener: TcpListener,
 }
 
 impl Listener {
-    pub fn new() -> Self {
-        todo!()
-    }
-
     pub async fn run(&mut self) -> crate::Result<()> {
+        // accept a socket, then handle it
         loop {
             let (socket, _) = self.accept().await?;
 
             let mut handler = Handler {
-                db: self.db.clone(),
-                connection: Connection::new(socket)
+                db: self.db_holder.db(),
+                connection: Connection::new(socket),
             };
-            
-            tokio::spawn(async move { 
+
+            tokio::spawn(async move {
                 if let Err(err) = handler.run().await {
-                    todo!()
+                    eprintln!("{err}");
                 }
+                println!("{}#{}: peer exit", file!(), line!());
             });
         }
     }
@@ -48,7 +46,6 @@ impl Listener {
                     }
                 }
             }
-
             tokio::time::sleep(Duration::from_secs(backoff)).await;
             backoff *= 2;
         }

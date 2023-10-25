@@ -19,11 +19,11 @@ pub async fn run(listener: TcpListener, shutdown: impl Future) {
     tokio::select! {
         res = server.run() => {
             if let Err(err) = res {
-                eprintln!("Failed to run server: {err}");
+                eprintln!("failed to run server: {err}");
             }
         }
         _ = shutdown => {
-            println!("shutdown");
+            println!("server shutdown gracefully");
         }
     }
 }

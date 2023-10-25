@@ -4,7 +4,7 @@ use std::time::Duration;
 use tokio::net::{TcpListener, TcpStream};
 
 use crate::connection::Connection;
-use crate::db::{Db, DbDropGuard};
+use crate::db::DbDropGuard;
 
 use super::handler::Handler;
 

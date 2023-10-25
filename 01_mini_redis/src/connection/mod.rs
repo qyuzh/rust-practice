@@ -42,7 +42,7 @@ impl Connection {
             Frame::Array(val) => {
                 self.stream.write_u8(b'*').await?;
                 self.write_decimal(val.len() as i64).await?;
-                for entry in &**val {
+                for entry in val.iter() {
                     self.write_value(entry).await?;
                 }
             }
@@ -54,17 +54,8 @@ impl Connection {
 
 impl Connection {
     async fn write_decimal(&mut self, val: i64) -> io::Result<()> {
-        use std::io::Write;
-
-        // Convert the value to a string
-        let mut buf = [0u8; 20];
-        let mut buf = Cursor::new(&mut buf[..]);
-        write!(&mut buf, "{}", val)?;
-
-        let pos = buf.position() as usize;
-        self.stream.write_all(&buf.get_ref()[..pos]).await?;
+        self.stream.write_all(val.to_string().as_bytes()).await?;
         self.stream.write_all(b"\r\n").await?;
-
         Ok(())
     }
 

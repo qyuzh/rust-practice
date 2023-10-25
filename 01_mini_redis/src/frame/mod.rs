@@ -36,7 +36,6 @@ impl Frame {
             }
             // bulk `$<length>\r\n<data>\r\n` | `$-1\r\n`
             b'$' => {
-                let p = peek_u8(src)?;
                 if peek_u8(src)? == b'-' { // Null Bulk strings
                     skip(src, 4) // skip -1\r\n
                 } else {

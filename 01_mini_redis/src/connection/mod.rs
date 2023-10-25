@@ -8,6 +8,7 @@ use tokio::net::TcpStream;
 use crate::frame;
 use crate::frame::Frame;
 
+/// Tcp bytes to Redis frame, vice versa.
 pub struct Connection {
     stream: BufWriter<TcpStream>,
     read_buf: BytesMut,

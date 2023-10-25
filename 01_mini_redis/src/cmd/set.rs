@@ -27,7 +27,7 @@ impl Set {
             expire,
         }
     }
-
+    
     /// Get the key
     pub fn key(&self) -> &str {
         &self.key
@@ -42,8 +42,10 @@ impl Set {
     pub fn expire(&self) -> Option<Duration> {
         self.expire
     }
+}
 
-    pub(crate) fn parse_frames(parse: &mut Parse) -> crate::Result<Set> {
+impl Set {
+    pub(crate) fn parse_frame(parse: &mut Parse) -> crate::Result<Set> {
         use crate::parse::Error::EndOfStream;
 
         let key = parse.next_string()?;
@@ -73,7 +75,9 @@ impl Set {
         dst.write_frame(&response).await?;
         Ok(())
     }
+}
 
+impl Set {
     pub(crate) fn into_frame(self) -> Frame {
         let mut frame = Frame::array();
         frame.push_bulk(Bytes::from("set".as_bytes()));

@@ -4,12 +4,12 @@ use std::time::Duration;
 use tokio::net::{TcpListener, TcpStream};
 
 use crate::connection::Connection;
-use crate::db::Db;
+use crate::db::{Db, DbDropGuard};
 
 use super::handler::Handler;
 
 pub struct Listener {
-    pub db: Db,
+    pub db_holder: DbDropGuard,
     pub listener: TcpListener,
 }
 
@@ -20,14 +20,15 @@ impl Listener {
             let (socket, _) = self.accept().await?;
 
             let mut handler = Handler {
-                db: self.db.clone(),
+                db: self.db_holder.db(),
                 connection: Connection::new(socket),
             };
 
             tokio::spawn(async move {
                 if let Err(err) = handler.run().await {
-                    println!("{err}");
+                    eprintln!("{err}");
                 }
+                println!("{}#{}: peer exit", file!(), line!());
             });
         }
     }

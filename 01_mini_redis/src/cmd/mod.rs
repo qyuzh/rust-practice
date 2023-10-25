@@ -23,8 +23,8 @@ impl Command {
         let command_name = parse.next_string()?.to_lowercase();
         let command = match &command_name[..] {
             "get" => Command::Get(Get::parse_frame(&mut parse)?),
-            "set" => Command::Set(Set::parse_frames(&mut parse)?),
-            _ => todo!()
+            "set" => Command::Set(Set::parse_frame(&mut parse)?),
+            _ => unimplemented!()
         };
         parse.finish()?;
         Ok(command)
@@ -36,7 +36,7 @@ impl Command {
         match self {
             Get(cmd) => cmd.apply(db, dst).await,
             Set(cmd) => cmd.apply(db, dst).await,
-            _ => todo!()
+            _ => unimplemented!()
         }
     }
 }

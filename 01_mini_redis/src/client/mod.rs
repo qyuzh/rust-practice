@@ -32,7 +32,12 @@ impl Client {
     }
 
     pub async fn set(&mut self, key: &str, value: Bytes, expire: Option<Duration>) -> crate::Result<()> {
-        self.set_cmd(Set::new(key, value, expire)).await
+        let frame = Set::new(key, value, expire).into_frame();
+        self.connection.write_frame(&frame).await?;
+        match self.read_response().await? {
+            Frame::Simple(resp) if resp == "OK" => Ok(()),
+            frame => Err(frame.to_error()),
+        }
     }
 }
 
@@ -46,15 +51,6 @@ impl Client {
                 let err = std::io::Error::new(ErrorKind::ConnectionReset, "connection reset by server");
                 Err(err.into())
             }
-        }
-    }
-
-    async fn set_cmd(&mut self, cmd: Set) -> crate::Result<()> {
-        let frame = cmd.into_frame();
-        self.connection.write_frame(&frame).await?;
-        match self.read_response().await? {
-            Frame::Simple(resp) if resp == "OK" => Ok(()),
-            frame => Err(frame.to_error()),
         }
     }
 }

@@ -8,7 +8,7 @@ use crate::frame::Frame;
 
 mod error;
 
-/// Parse frame to command
+/// Redis frame to Redis command
 pub struct Parse {
     parts: IntoIter<Frame>,
 }

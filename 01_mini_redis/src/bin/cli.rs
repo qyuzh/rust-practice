@@ -43,6 +43,15 @@ enum Command {
     },
 }
 
+fn duration_from_ms_str(src: &str) -> Result<Duration, ParseIntError> {
+    let ms = src.parse::<u64>()?;
+    Ok(Duration::from_millis(ms))
+}
+
+fn bytes_from_str(src: &str) -> Result<Bytes, Infallible> {
+    Ok(Bytes::from(src.to_string()))
+}
+
 #[tokio::main(flavor = "current_thread")]
 async fn main() -> mini_redis::Result<()> {
     let cli = Cli::parse();
@@ -75,13 +84,4 @@ async fn main() -> mini_redis::Result<()> {
     }
 
     Ok(())
-}
-
-fn duration_from_ms_str(src: &str) -> Result<Duration, ParseIntError> {
-    let ms = src.parse::<u64>()?;
-    Ok(Duration::from_millis(ms))
-}
-
-fn bytes_from_str(src: &str) -> Result<Bytes, Infallible> {
-    Ok(Bytes::from(src.to_string()))
 }

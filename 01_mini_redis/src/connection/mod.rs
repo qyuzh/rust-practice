@@ -21,12 +21,16 @@ impl Connection {
             read_buf: BytesMut::with_capacity(4 * 1024),
         }
     }
-
+    
+    /// Read bytes from tcp stream, and then convert it to Redis Frame
     pub async fn read_frame(&mut self) -> crate::Result<Option<Frame>> {
         loop {
+            // convert if possible
             if let Some(frame) = parse_frame(&mut self.read_buf)? {
                 return Ok(Some(frame));
             }
+            
+            // read bytes from tcp stream
             if 0 == self.stream.read_buf(&mut self.read_buf).await? {
                 return if self.read_buf.is_empty() {
                     Ok(None)
@@ -92,15 +96,15 @@ impl Connection {
     }
 }
 
+/// Convert bytes to frame
 fn parse_frame(read_buf: &mut BytesMut) -> crate::Result<Option<Frame>> {
     let mut buf = Cursor::new(&read_buf[..]);
     match Frame::check(&mut buf) {
         Ok(_) => {
-            let len = buf.position() as usize;
             buf.set_position(0);
-            // buf.get_ref().advance(1);
             let frame = Frame::parse(&mut buf)?;
-            read_buf.advance(len);
+            
+            read_buf.advance(buf.position() as usize);
             Ok(Some(frame))
         }
         Err(frame::Error::Incomplete) => Ok(None),

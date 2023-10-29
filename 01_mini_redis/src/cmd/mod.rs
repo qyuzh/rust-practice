@@ -24,7 +24,7 @@ impl Command {
         let command = match &command_name[..] {
             "get" => Command::Get(Get::parse_frame(&mut parse)?),
             "set" => Command::Set(Set::parse_frame(&mut parse)?),
-            _ => unimplemented!()
+            _ => unimplemented!(),
         };
         parse.finish()?;
         Ok(command)
@@ -36,7 +36,7 @@ impl Command {
         match self {
             Get(cmd) => cmd.apply(db, dst).await,
             Set(cmd) => cmd.apply(db, dst).await,
-            _ => unimplemented!()
+            _ => unimplemented!(),
         }
     }
 }

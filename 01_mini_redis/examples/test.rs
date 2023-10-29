@@ -7,8 +7,6 @@ impl Clone for CanDrop {
     }
 }
 
-
-
 fn main() {
     println!("hello, world!");
 }

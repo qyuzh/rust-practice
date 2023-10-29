@@ -34,18 +34,14 @@ pub struct Db {
 
 impl Db {
     pub fn new() -> Self {
-        let shared = Arc::new(
-            Shared {
-                state: Mutex::new(
-                    State {
-                        entries: HashMap::new(),
-                        expirations: BTreeSet::new(),
-                        shutdown: false,
-                    }
-                ),
-                purging_task: Notify::new(),
-            }
-        );
+        let shared = Arc::new(Shared {
+            state: Mutex::new(State {
+                entries: HashMap::new(),
+                expirations: BTreeSet::new(),
+                shutdown: false,
+            }),
+            purging_task: Notify::new(),
+        });
 
         tokio::spawn(task_for_purging_expired_keys(shared.clone()));
 
@@ -56,7 +52,7 @@ impl Db {
         let state = self.shared.state.lock().unwrap();
         state.entries.get(key).map(|e| e.data.clone())
     }
-    
+
     /// 1. now = 0,  key = qyuzh, duration = 20, so we have (when=20, qyuzh)
     /// 2. now = 10, key = qyuzh, duration = 10, so we have (when=20, qyuzh)
     pub fn set(&self, key: String, value: Bytes, expire: Option<Duration>) {
@@ -66,11 +62,14 @@ impl Db {
         let expires_at = expire.map(|duration| {
             let when = Instant::now() + duration;
 
-            notify = state.next_expiration().map(|exp| exp > when).unwrap_or(true);
-            
+            notify = state
+                .next_expiration()
+                .map(|exp| exp > when)
+                .unwrap_or(true);
+
             // insert expiration for current key
             state.expirations.insert((when, key.clone()));
-            
+
             when
         });
 
@@ -81,7 +80,7 @@ impl Db {
                 expires_at,
             },
         );
-        
+
         // remove the previous expiration if has for avoiding memory leaking
         if let Some(prev) = prev {
             if let Some(when) = prev.expires_at {
@@ -90,9 +89,9 @@ impl Db {
                 }
             }
         }
-        
+
         drop(state);
-        
+
         if notify {
             self.shared.purging_task.notify_one();
         }
@@ -104,7 +103,7 @@ impl Db {
         let mut state = self.shared.state.lock().unwrap();
         state.shutdown = true;
 
-        // drop in advance for reducing lock contention by ensuring the background task doesn't 
+        // drop in advance for reducing lock contention by ensuring the background task doesn't
         // wake up only to be unable to acquire the mutex
         drop(state);
         self.shared.purging_task.notify_one();

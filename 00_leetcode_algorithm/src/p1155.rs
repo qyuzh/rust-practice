@@ -2,7 +2,7 @@
 /// `f[t][[i] = sum_(j_i){f[t - g[j_i]][i - 1]}`
 pub fn num_rolls_to_target(n: i32, k: i32, target: i32) -> i32 {
     let mut f = vec![0; target as usize + 1];
-    // 1. init f, after this, f = 0 1 1 ... 1(k times) 0 0 
+    // 1. init f, after this, f = 0 1 1 ... 1(k times) 0 0
     for t in 1..k.min(target) as usize + 1 {
         f[t] = 1;
     }

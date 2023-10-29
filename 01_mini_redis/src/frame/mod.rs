@@ -35,7 +35,8 @@ impl Frame {
             }
             // bulk `$<length>\r\n<data>\r\n` | `$-1\r\n`
             b'$' => {
-                if peek_u8(src)? != b'-' { // Null Bulk strings
+                if peek_u8(src)? != b'-' {
+                    // Null Bulk strings
                     skip(src, 4) // skip -1\r\n
                 } else {
                     let len: usize = get_decimal(src)?.try_into()?;
@@ -74,7 +75,8 @@ impl Frame {
             }
             // bulk `$<length>\r\n<data>\r\n` | `$-1\r\n`
             b'$' => {
-                if peek_u8(src)? == b'-' { // Null Bulk strings
+                if peek_u8(src)? == b'-' {
+                    // Null Bulk strings
                     let line = get_line(src)?;
                     if line != b"-1" {
                         return Err("protocol error: invalid bulk data".into());
@@ -104,7 +106,6 @@ impl Frame {
         }
     }
 }
-
 
 fn get_u8(src: &mut Cursor<&[u8]>) -> Result<u8, Error> {
     if !src.has_remaining() {
@@ -158,7 +159,7 @@ mod test {
         let mut buf = Cursor::new(frame);
         match Frame::check(&mut buf) {
             Ok(_) => assert!(true),
-            Err(_) => assert!(false)
+            Err(_) => assert!(false),
         }
     }
 
@@ -168,7 +169,7 @@ mod test {
         let mut buf = Cursor::new(frame);
         match Frame::check(&mut buf) {
             Ok(_) => assert!(false),
-            Err(_) => assert!(true)
+            Err(_) => assert!(true),
         }
     }
 

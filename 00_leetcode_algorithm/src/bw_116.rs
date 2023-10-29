@@ -83,7 +83,11 @@ pub fn length_of_longest_subsequence(nums: Vec<i32>, target: i32) -> i32 {
             f[t as usize] = f[t as usize].max(f[(t - nums[i]) as usize] + 1);
         }
     }
-    if f[target as usize] < 0 { -1 } else { f[target as usize] }
+    if f[target as usize] < 0 {
+        -1
+    } else {
+        f[target as usize]
+    }
 }
 
 /// D

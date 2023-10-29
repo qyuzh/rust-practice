@@ -3,7 +3,7 @@ use crate::db::Db;
 use crate::frame::Frame;
 
 pub enum Command {
-    Get
+    Get,
 }
 
 impl Command {

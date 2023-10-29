@@ -56,4 +56,3 @@ fn parse_frame(read_buf: &mut BytesMut) -> crate::Result<Option<Frame>> {
         }
     }
 }
-

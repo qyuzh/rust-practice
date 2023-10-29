@@ -1,8 +1,8 @@
 use std::net::SocketAddr;
 use std::time::Duration;
 
-use tokio::net::{TcpListener, TcpStream};
 use crate::connection::Connection;
+use tokio::net::{TcpListener, TcpStream};
 
 use crate::db::Db;
 
@@ -24,10 +24,10 @@ impl Listener {
 
             let mut handler = Handler {
                 db: self.db.clone(),
-                connection: Connection::new(socket)
+                connection: Connection::new(socket),
             };
-            
-            tokio::spawn(async move { 
+
+            tokio::spawn(async move {
                 if let Err(err) = handler.run().await {
                     todo!()
                 }

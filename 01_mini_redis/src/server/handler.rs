@@ -14,11 +14,11 @@ impl Handler {
 
             let frame = match maybe_frame {
                 Some(frame) => frame,
-                None => return Ok(())
+                None => return Ok(()),
             };
-            
+
             let cmd = Command::from_frame(frame)?;
-            
+
             cmd.apply(&self.db, &self.connection).await?;
         }
     }

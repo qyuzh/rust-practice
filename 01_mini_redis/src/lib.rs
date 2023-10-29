@@ -1,11 +1,14 @@
-pub use constants::*;
+pub use config::*;
+
+pub mod client;
+pub mod config;
+pub mod server;
 
 mod cmd;
 mod connection;
-mod constants;
 mod db;
 mod frame;
-pub mod server;
+mod parse;
 
-pub type Error = Box<dyn std::error::Error + Send + Sync>;
+type Error = Box<dyn std::error::Error + Send + Sync>;
 pub type Result<T> = std::result::Result<T, Error>;

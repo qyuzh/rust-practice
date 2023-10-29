@@ -2,10 +2,11 @@ use std::io::Cursor;
 
 use bytes::{Buf, Bytes};
 
-use error::Error;
+pub use error::Error;
 
 mod error;
 
+#[derive(Debug)]
 pub enum Frame {
     Simple(String),
     Error(String),
@@ -35,7 +36,7 @@ impl Frame {
             }
             // bulk `$<length>\r\n<data>\r\n` | `$-1\r\n`
             b'$' => {
-                if peek_u8(src)? != b'-' {
+                if peek_u8(src)? == b'-' {
                     // Null Bulk strings
                     skip(src, 4) // skip -1\r\n
                 } else {
@@ -50,7 +51,11 @@ impl Frame {
                 }
                 Ok(())
             }
-            actual => Err(format!("protocol error; invalid frame type byte `{}`", actual).into()),
+            actual => Err(format!(
+                "protocol error, invalid frame type byte `{}`",
+                actual as char
+            )
+            .into()),
         }
     }
 
@@ -84,13 +89,11 @@ impl Frame {
                     Ok(Frame::Null)
                 } else {
                     let len: usize = get_decimal(src)?.try_into()?;
-                    if src.remaining() < len {
+                    if src.remaining() < len + 2 {
                         return Err(Error::Incomplete);
                     }
                     let data = Bytes::copy_from_slice(&src.chunk()[..len]);
-
                     skip(src, len + 2)?; // skip n + \r\n
-
                     Ok(Frame::Bulk(data))
                 }
             }
@@ -104,6 +107,34 @@ impl Frame {
             }
             _ => unimplemented!(),
         }
+    }
+}
+
+impl Frame {
+    pub(crate) fn array() -> Frame {
+        Frame::Array(vec![])
+    }
+
+    pub(crate) fn push_bulk(&mut self, bytes: Bytes) {
+        match self {
+            Frame::Array(vec) => {
+                vec.push(Frame::Bulk(bytes));
+            }
+            _ => panic!("not an array frame"),
+        }
+    }
+
+    pub(crate) fn push_int(&mut self, value: i64) {
+        match self {
+            Frame::Array(vec) => {
+                vec.push(Frame::Integer(value));
+            }
+            _ => panic!("not an array frame"),
+        }
+    }
+
+    pub(crate) fn to_error(&self) -> crate::Error {
+        format!("unexpected frame: {:?}", self).into()
     }
 }
 
@@ -170,6 +201,15 @@ mod test {
         match Frame::check(&mut buf) {
             Ok(_) => assert!(false),
             Err(_) => assert!(true),
+        }
+    }
+
+    #[test]
+    fn frame_check_array() {
+        let mut buf = gen_cursor_with_buf(b"*2\r\n$3\r\nget\r\n$4\r\nname\r\n");
+        match Frame::check(&mut buf) {
+            Ok(_) => assert!(true),
+            Err(_) => assert!(false),
         }
     }
 

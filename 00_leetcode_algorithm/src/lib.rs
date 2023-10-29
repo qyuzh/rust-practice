@@ -1,5 +1,9 @@
 // bi-weekly contest
 pub mod bw_115;
+pub mod bw_116;
+
+// weekly contest
+pub mod wc_369;
 
 pub mod p901;
 pub mod p2512;
@@ -14,3 +18,4 @@ pub mod p2698;
 pub mod p2520;
 pub mod p1465;
 pub mod p2558;
+pub mod p274;

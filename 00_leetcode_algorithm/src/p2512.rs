@@ -12,8 +12,8 @@ pub fn top_students(
     let mut rank = vec![0; n];
 
 
-    let mut positive_feedback: HashSet<String> = positive_feedback.into_iter().collect();
-    let mut negative_feedback: HashSet<String> = negative_feedback.into_iter().collect();
+    let positive_feedback: HashSet<String> = positive_feedback.into_iter().collect();
+    let negative_feedback: HashSet<String> = negative_feedback.into_iter().collect();
     let mut hm = HashMap::with_capacity(n);
     student_id.iter().enumerate().for_each(|(i, &v)| { hm.insert(v, i); });
 

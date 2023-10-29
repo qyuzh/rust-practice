@@ -13,7 +13,7 @@ impl StockSpanner {
     }
 
     pub fn next(&mut self, price: i32) -> i32 {
-        let mut ans = 0;
+        let ans;
         let mut pre_idx = self.idx;
         loop {
             let (p, idx) = *self.mono_stack.last().unwrap();

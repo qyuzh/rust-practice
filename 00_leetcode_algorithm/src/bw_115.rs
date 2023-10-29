@@ -20,7 +20,7 @@ pub fn last_visited_integers(words: Vec<String>) -> Vec<i32> {
 }
 
 ///
-pub fn get_words_in_longest_subsequence(n: i32, words: Vec<String>, groups: Vec<i32>) -> Vec<String> {
+pub fn get_words_in_longest_subsequence(_n: i32, words: Vec<String>, groups: Vec<i32>) -> Vec<String> {
     let mut ans = vec![];
     let mut pre = groups[0];
     ans.push(words[0].clone());
@@ -35,7 +35,7 @@ pub fn get_words_in_longest_subsequence(n: i32, words: Vec<String>, groups: Vec<
 
 /// 1. the same idea to the problem B
 /// 2. dfs
-pub fn get_words_in_longest_subsequence_c(n: i32, words: Vec<String>, groups: Vec<i32>) -> Vec<String> {
+pub fn get_words_in_longest_subsequence_c(_n: i32, _words: Vec<String>, _groups: Vec<i32>) -> Vec<String> {
     todo!()
 }
 

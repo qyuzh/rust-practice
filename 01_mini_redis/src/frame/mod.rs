@@ -36,7 +36,8 @@ impl Frame {
             }
             // bulk `$<length>\r\n<data>\r\n` | `$-1\r\n`
             b'$' => {
-                if peek_u8(src)? == b'-' { // Null Bulk strings
+                if peek_u8(src)? == b'-' {
+                    // Null Bulk strings
                     skip(src, 4) // skip -1\r\n
                 } else {
                     let len: usize = get_decimal(src)?.try_into()?;
@@ -51,7 +52,11 @@ impl Frame {
                 }
                 Ok(())
             }
-            actual => Err(format!("protocol error, invalid frame type byte `{}`", actual as char).into()),
+            actual => Err(format!(
+                "protocol error, invalid frame type byte `{}`",
+                actual as char
+            )
+            .into()),
         }
     }
 
@@ -76,7 +81,8 @@ impl Frame {
             }
             // bulk `$<length>\r\n<data>\r\n` | `$-1\r\n`
             b'$' => {
-                if peek_u8(src)? == b'-' { // Null Bulk strings
+                if peek_u8(src)? == b'-' {
+                    // Null Bulk strings
                     let line = get_line(src)?;
                     if line != b"-1" {
                         return Err("protocol error: invalid bulk data".into());
@@ -109,7 +115,7 @@ impl Frame {
     pub(crate) fn array() -> Frame {
         Frame::Array(vec![])
     }
-    
+
     pub(crate) fn push_bulk(&mut self, bytes: Bytes) {
         match self {
             Frame::Array(vec) => {
@@ -132,7 +138,6 @@ impl Frame {
         format!("unexpected frame: {:?}", self).into()
     }
 }
-
 
 fn get_u8(src: &mut Cursor<&[u8]>) -> Result<u8, Error> {
     if !src.has_remaining() {
@@ -186,7 +191,7 @@ mod test {
         let mut buf = Cursor::new(frame);
         match Frame::check(&mut buf) {
             Ok(_) => assert!(true),
-            Err(_) => assert!(false)
+            Err(_) => assert!(false),
         }
     }
 
@@ -196,7 +201,7 @@ mod test {
         let mut buf = Cursor::new(frame);
         match Frame::check(&mut buf) {
             Ok(_) => assert!(false),
-            Err(_) => assert!(true)
+            Err(_) => assert!(true),
         }
     }
 
@@ -205,7 +210,7 @@ mod test {
         let mut buf = gen_cursor_with_buf(b"*2\r\n$3\r\nget\r\n$4\r\nname\r\n");
         match Frame::check(&mut buf) {
             Ok(_) => assert!(true),
-            Err(_) => assert!(false)
+            Err(_) => assert!(false),
         }
     }
 

@@ -4,9 +4,9 @@ pub mod client;
 pub mod config;
 pub mod server;
 
-mod db;
-mod connection;
 mod cmd;
+mod connection;
+mod db;
 mod frame;
 mod parse;
 

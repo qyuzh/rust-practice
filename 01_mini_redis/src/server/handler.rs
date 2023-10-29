@@ -13,7 +13,7 @@ impl Handler {
             let maybe_frame = self.connection.read_frame().await?;
             let frame = match maybe_frame {
                 Some(frame) => frame,
-                None => return Ok(())
+                None => return Ok(()),
             };
             let cmd = Command::from_frame(frame)?;
             cmd.apply(&self.db, &mut self.connection).await?;

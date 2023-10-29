@@ -19,15 +19,15 @@ fn cursor_learning() {
     buffer.put(&b"123456789"[..]);
     buffer.advance(3);
     println!("{buffer:?}");
-    
+
     let mut buf = std::io::Cursor::new(&buffer[..]);
 
     buf.get_mut().advance(3);
     println!("{} {buf:?}", buf.position());
-    
+
     buf.advance(1);
     println!("{} {buf:?}", buf.position());
-    
+
     buf.set_position(2);
     println!("{} {buf:?}", buf.position());
 

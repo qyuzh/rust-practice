@@ -67,9 +67,6 @@ impl Db {
                 .map(|exp| exp > when)
                 .unwrap_or(true);
 
-            // insert expiration for current key
-            state.expirations.insert((when, key.clone()));
-
             when
         });
 
@@ -84,10 +81,13 @@ impl Db {
         // remove the previous expiration if has for avoiding memory leaking
         if let Some(prev) = prev {
             if let Some(when) = prev.expires_at {
-                if expires_at.is_none() || when != expires_at.unwrap() {
-                    state.expirations.remove(&(when, key));
-                }
+                state.expirations.remove(&(when, key.clone()));
             }
+        }
+
+        if let Some(when) = expires_at {
+            // insert expiration for current key
+            state.expirations.insert((when, key));
         }
 
         drop(state);
@@ -162,6 +162,7 @@ struct Entry {
 
 /// Start the task when new Db, and remove the task when all db dropped in DbDropGuard
 async fn task_for_purging_expired_keys(shared: Arc<Shared>) {
+    println!("task_for_purging_expired_keys start");
     while !shared.is_shutdown() {
         if let Some(when) = shared.purge_expired_keys() {
             tokio::select! {

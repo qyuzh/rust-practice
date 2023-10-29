@@ -21,12 +21,16 @@ impl Connection {
             read_buf: BytesMut::with_capacity(4 * 1024),
         }
     }
-
+    
+    /// Read bytes from tcp stream, and then convert it to Redis Frame
     pub async fn read_frame(&mut self) -> crate::Result<Option<Frame>> {
         loop {
+            // convert if possible
             if let Some(frame) = parse_frame(&mut self.read_buf)? {
                 return Ok(Some(frame));
             }
+            
+            // read bytes from tcp stream
             if 0 == self.stream.read_buf(&mut self.read_buf).await? {
                 return if self.read_buf.is_empty() {
                     Ok(None)
@@ -42,7 +46,7 @@ impl Connection {
             Frame::Array(val) => {
                 self.stream.write_u8(b'*').await?;
                 self.write_decimal(val.len() as i64).await?;
-                for entry in &**val {
+                for entry in val.iter() {
                     self.write_value(entry).await?;
                 }
             }
@@ -54,17 +58,8 @@ impl Connection {
 
 impl Connection {
     async fn write_decimal(&mut self, val: i64) -> io::Result<()> {
-        use std::io::Write;
-
-        // Convert the value to a string
-        let mut buf = [0u8; 20];
-        let mut buf = Cursor::new(&mut buf[..]);
-        write!(&mut buf, "{}", val)?;
-
-        let pos = buf.position() as usize;
-        self.stream.write_all(&buf.get_ref()[..pos]).await?;
+        self.stream.write_all(val.to_string().as_bytes()).await?;
         self.stream.write_all(b"\r\n").await?;
-
         Ok(())
     }
 
@@ -101,15 +96,15 @@ impl Connection {
     }
 }
 
+/// Convert bytes to frame
 fn parse_frame(read_buf: &mut BytesMut) -> crate::Result<Option<Frame>> {
     let mut buf = Cursor::new(&read_buf[..]);
     match Frame::check(&mut buf) {
         Ok(_) => {
-            let len = buf.position() as usize;
             buf.set_position(0);
-            // buf.get_ref().advance(1);
             let frame = Frame::parse(&mut buf)?;
-            read_buf.advance(len);
+            
+            read_buf.advance(buf.position() as usize);
             Ok(Some(frame))
         }
         Err(frame::Error::Incomplete) => Ok(None),

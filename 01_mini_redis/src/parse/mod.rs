@@ -24,10 +24,6 @@ impl Parse {
         })
     }
 
-    pub fn next(&mut self) -> Result<Frame, Error> {
-        self.parts.next().ok_or(Error::EndOfStream)
-    }
-
     pub fn next_string(&mut self) -> Result<String, Error> {
         match self.next()? {
             Frame::Simple(s) => Ok(s),
@@ -72,5 +68,11 @@ impl Parse {
         } else {
             Err("protocol error; expected end of frame, but there was more".into())
         }
+    }
+}
+
+impl Parse {
+    fn next(&mut self) -> Result<Frame, Error> {
+        self.parts.next().ok_or(Error::EndOfStream)
     }
 }

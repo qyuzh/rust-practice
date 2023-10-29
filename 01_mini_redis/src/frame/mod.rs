@@ -44,6 +44,7 @@ impl Frame {
                     skip(src, len + 2) // skip n + \r\n
                 }
             }
+            // array `*<length>\r\n<frame>\r\n...<frame>\r\n`
             b'*' => {
                 let len: usize = get_decimal(src)?.try_into()?;
                 for _ in 0..len {

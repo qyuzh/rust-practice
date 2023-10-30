@@ -9,20 +9,24 @@ use crate::db::DbDropGuard;
 use super::handler::Handler;
 
 pub struct Listener {
-    pub db_holder: DbDropGuard,
-    pub listener: TcpListener,
+    db_holder: DbDropGuard,
+    listener: TcpListener,
 }
 
 impl Listener {
+    pub fn new(listener: TcpListener) -> Self {
+        Self {
+            db_holder: DbDropGuard::new(),
+            listener,
+        }
+    }
+
     pub async fn run(&mut self) -> crate::Result<()> {
         // accept a socket, then handle it
         loop {
             let (socket, _) = self.accept().await?;
 
-            let mut handler = Handler {
-                db: self.db_holder.db(),
-                connection: Connection::new(socket),
-            };
+            let mut handler = Handler::new(self.db_holder.db(), Connection::new(socket));
 
             tokio::spawn(async move {
                 if let Err(err) = handler.run().await {

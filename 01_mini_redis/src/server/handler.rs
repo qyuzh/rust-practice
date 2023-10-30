@@ -3,11 +3,15 @@ use crate::connection::Connection;
 use crate::db::Db;
 
 pub struct Handler {
-    pub db: Db,
-    pub connection: Connection,
+    db: Db,
+    connection: Connection,
 }
 
 impl Handler {
+    pub fn new(db: Db, connection: Connection) -> Self {
+        Self { db, connection }
+    }
+
     pub async fn run(&mut self) -> crate::Result<()> {
         loop {
             let maybe_frame = self.connection.read_frame().await?;

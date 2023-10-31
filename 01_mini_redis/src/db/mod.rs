@@ -6,6 +6,7 @@ use bytes::Bytes;
 use tokio::sync::Notify;
 use tokio::time;
 use tokio::time::Instant;
+use tracing::info;
 
 pub struct DbDropGuard {
     db: Db,
@@ -162,7 +163,7 @@ struct Entry {
 
 /// Start the task when new Db, and remove the task when all db dropped in DbDropGuard
 async fn task_for_purging_expired_keys(shared: Arc<Shared>) {
-    println!("task_for_purging_expired_keys start");
+    info!("task_for_purging_expired_keys start");
     while !shared.is_shutdown() {
         if let Some(when) = shared.purge_expired_keys() {
             tokio::select! {
@@ -173,5 +174,5 @@ async fn task_for_purging_expired_keys(shared: Arc<Shared>) {
             shared.purging_task.notified().await;
         }
     }
-    println!("task_for_purging_expired_keys exit");
+    info!("task_for_purging_expired_keys exit");
 }

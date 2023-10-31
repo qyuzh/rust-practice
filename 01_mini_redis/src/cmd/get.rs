@@ -15,7 +15,7 @@ impl Get {
             key: key.to_string(),
         }
     }
-    
+
     fn key(&self) -> &str {
         &self.key
     }

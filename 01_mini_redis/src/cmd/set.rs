@@ -27,7 +27,7 @@ impl Set {
             expire,
         }
     }
-    
+
     /// Get the key
     pub fn key(&self) -> &str {
         &self.key

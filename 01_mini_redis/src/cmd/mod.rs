@@ -1,3 +1,5 @@
+use tracing::info;
+
 use get::Get;
 use set::Set;
 
@@ -21,6 +23,7 @@ impl Command {
     pub fn from_frame(frame: Frame) -> crate::Result<Command> {
         let mut parse = Parse::new(frame)?;
         let command_name = parse.next_string()?.to_lowercase();
+        info!(cmd = command_name);
         let command = match &command_name[..] {
             "get" => Command::Get(Get::parse_frame(&mut parse)?),
             "set" => Command::Set(Set::parse_frame(&mut parse)?),

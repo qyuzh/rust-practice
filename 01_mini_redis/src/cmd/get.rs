@@ -9,6 +9,7 @@ pub struct Get {
     pub key: String,
 }
 
+#[allow(unused)]
 impl Get {
     pub(crate) fn new(key: impl ToString) -> Get {
         Get {

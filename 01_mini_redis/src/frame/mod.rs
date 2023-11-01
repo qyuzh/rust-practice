@@ -6,6 +6,7 @@ pub use error::Error;
 
 mod error;
 
+#[allow(unused)]
 #[derive(Debug)]
 pub enum Frame {
     Simple(String),

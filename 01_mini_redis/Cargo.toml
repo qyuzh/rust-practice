@@ -18,3 +18,9 @@ clap = { version = "4.4.6", features = ["derive"] }
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["local-time", "time"] }
 time = { version = "0.3", features = ["macros"] }
+# Implements the types defined in the Otel spec
+opentelemetry = "0.17.0"
+# Integration between the tracing crate and the opentelemetry crate
+tracing-opentelemetry = "0.17.2"
+# Allows you to export data to Jaeger
+opentelemetry-jaeger = "0.16.0"

@@ -10,8 +10,6 @@ mod listener;
 mod handler;
 
 pub async fn run(listener: TcpListener, shutdown: impl Future) {
-    info!("server started");
-    // debug!("");
     let mut server = Listener::new(listener);
     tokio::select! {
         res = server.run() => {
@@ -24,5 +22,4 @@ pub async fn run(listener: TcpListener, shutdown: impl Future) {
             info!("received shutdown command");
         }
     }
-    info!("server exited");
 }

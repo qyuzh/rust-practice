@@ -1,4 +1,3 @@
-use opentelemetry::global;
 use time::macros::format_description;
 use tokio::net::TcpListener;
 use tokio::signal;
@@ -26,7 +25,7 @@ fn config_logger() -> mini_redis::Result<()> {
         format_description!("[year]-[month]-[day]T[hour]:[minute]:[second].[subsecond digits:6][offset_hour sign:mandatory]:[offset_minute]")
     );
 
-    global::set_text_map_propagator(opentelemetry_jaeger::Propagator::new());
+    opentelemetry::global::set_text_map_propagator(opentelemetry_jaeger::Propagator::new());
     let tracer = opentelemetry_jaeger::new_pipeline()
         .with_service_name("mini-redis")
         .install_simple()?;

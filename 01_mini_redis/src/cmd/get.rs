@@ -9,13 +9,14 @@ pub struct Get {
     pub key: String,
 }
 
+#[allow(unused)]
 impl Get {
     pub(crate) fn new(key: impl ToString) -> Get {
         Get {
             key: key.to_string(),
         }
     }
-    
+
     fn key(&self) -> &str {
         &self.key
     }

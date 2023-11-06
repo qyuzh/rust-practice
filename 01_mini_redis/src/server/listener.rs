@@ -2,6 +2,7 @@ use std::net::SocketAddr;
 use std::time::Duration;
 
 use tokio::net::{TcpListener, TcpStream};
+use tracing::{error, info, info_span, instrument, Instrument};
 
 use crate::connection::Connection;
 use crate::db::DbDropGuard;
@@ -9,27 +10,37 @@ use crate::db::DbDropGuard;
 use super::handler::Handler;
 
 pub struct Listener {
-    pub db_holder: DbDropGuard,
-    pub listener: TcpListener,
+    db_holder: DbDropGuard,
+    listener: TcpListener,
 }
 
 impl Listener {
+    pub fn new(listener: TcpListener) -> Self {
+        Self {
+            db_holder: DbDropGuard::new(),
+            listener,
+        }
+    }
+
+    #[instrument(name = "listener", skip(self))]
     pub async fn run(&mut self) -> crate::Result<()> {
         // accept a socket, then handle it
         loop {
-            let (socket, _) = self.accept().await?;
+            let (socket, addr) = self.accept().await?;
 
-            let mut handler = Handler {
-                db: self.db_holder.db(),
-                connection: Connection::new(socket),
+            info!("accepted a new connection from {}", addr);
+
+            let mut handler = Handler::new(self.db_holder.db(), Connection::new(socket));
+
+            let f = async move {
+                info!("handle start");
+                if let Err(err) = handler.run().await {
+                    error!(%err);
+                }
+                info!("handle end  ");
             };
 
-            tokio::spawn(async move {
-                if let Err(err) = handler.run().await {
-                    eprintln!("{err}");
-                }
-                println!("{}#{}: peer exit", file!(), line!());
-            });
+            tokio::spawn(f.instrument(info_span!("handler", peer_addr = %addr)));
         }
     }
 }

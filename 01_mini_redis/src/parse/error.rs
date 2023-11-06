@@ -1,4 +1,5 @@
 use std::fmt::{Display, Formatter};
+
 #[derive(Debug)]
 pub enum Error {
     EndOfStream,
@@ -21,7 +22,7 @@ impl Display for Error {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
             Self::EndOfStream => "protocol error: unexpected end of stream".fmt(f),
-            Self::Other(err) => err.fmt(f)
+            Self::Other(err) => err.fmt(f),
         }
     }
 }

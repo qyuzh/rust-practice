@@ -30,11 +30,11 @@ impl Parse {
             Frame::Bulk(data) => std::str::from_utf8(&data[..])
                 .map(|s| s.to_string())
                 .map_err(|_| "protocol error; invalid string".into()),
-            frame => Err(
-                format!(
-                    "protocol error; expected simple frame or bulk frame, got {:?}",
-                    frame
-                ).into()),
+            frame => Err(format!(
+                "protocol error; expected simple frame or bulk frame, got {:?}",
+                frame
+            )
+            .into()),
         }
     }
 
@@ -42,11 +42,11 @@ impl Parse {
         match self.next()? {
             Frame::Simple(s) => Ok(Bytes::from(s.into_bytes())),
             Frame::Bulk(data) => Ok(data),
-            frame => Err(
-                format!(
-                    "protocol error; expected simple frame or bulk frame, got {:?}",
-                    frame
-                ).into()),
+            frame => Err(format!(
+                "protocol error; expected simple frame or bulk frame, got {:?}",
+                frame
+            )
+            .into()),
         }
     }
 

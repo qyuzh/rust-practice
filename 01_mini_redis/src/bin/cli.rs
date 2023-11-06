@@ -58,9 +58,7 @@ async fn main() -> mini_redis::Result<()> {
     let mut client = Client::connect(&format!("{}:{}", cli.hostname, cli.port)).await?;
 
     match cli.command {
-        Command::Get {
-            key,
-        } => {
+        Command::Get { key } => {
             print!("Get \"{key}\":...");
             if let Some(value) = client.get(&key).await? {
                 if let Ok(str) = std::str::from_utf8(&value) {

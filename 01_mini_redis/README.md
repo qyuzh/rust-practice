@@ -8,5 +8,9 @@ There are some concepts:
 3. Redis Command
 4. Store in memory
 
-**connection** transfer tcp stream into Redis frame
-**parse** transfer Redis frame into Redis command
+**connection** transfer tcp stream into Redis frame; **parse** help transfer Redis frame into Redis command
+
+## Features
+
+- [x] Support commands: `set`, `get` with ttl.
+- [ ] Log

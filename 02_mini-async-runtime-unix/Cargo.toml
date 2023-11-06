@@ -1,0 +1,20 @@
+[package]
+name = "mini-async-runtime-unix"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+
+[dependencies]
+polling = "2"
+socket2 = "0.4"
+libc = "0.2"
+nix = "0.23"
+scoped-tls = "1"
+futures = "0.3"
+waker-fn = "1"
+pin-utils = "0.1"
+rustc-hash = "1"
+chrono = "0.4"
+
+tokio = { version = "1", features = ["io-util"] }

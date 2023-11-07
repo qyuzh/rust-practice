@@ -8,11 +8,6 @@
       <sourceFolder url="file://$MODULE_DIR$/00_leetcode_algorithm/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/02_mini-async-runtime-unix/examples" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/02_mini-async-runtime-unix/src" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/00_leetcode-algorithm/src" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/01_mini-redis/examples" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/01_mini-redis/src" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/03_rust-lang-learning/examples" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/03_rust-lang-learning/src" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
     </content>
     <orderEntry type="inheritedJdk" />

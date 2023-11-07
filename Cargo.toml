@@ -1,5 +1,10 @@
 [workspace]
-members = ["02_mini-async-runtime-unix", "01_mini-redis", "00_leetcode-algorithm"]
+members = [
+    "03_rust-lang-learning",
+    "02_mini-async-runtime-unix",
+    "01_mini-redis",
+    "00_leetcode-algorithm"
+]
 resolver = "2"
 
 [workspace.package]

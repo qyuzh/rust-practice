@@ -8,6 +8,7 @@ pub mod wc_370;
 
 pub mod p1155;
 pub mod p117;
+pub mod p1334;
 pub mod p136;
 pub mod p137;
 pub mod p1465;
@@ -29,4 +30,5 @@ pub mod p274;
 pub mod p275;
 pub mod p318;
 pub mod p421;
+pub mod p715;
 pub mod p901;

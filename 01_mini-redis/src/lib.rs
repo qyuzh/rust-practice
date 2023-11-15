@@ -1,7 +1,6 @@
-pub use config::*;
+pub mod config;
 
 pub mod client;
-pub mod config;
 pub mod server;
 
 mod cmd;

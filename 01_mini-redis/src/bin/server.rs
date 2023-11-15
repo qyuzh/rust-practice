@@ -4,17 +4,15 @@ use tokio::signal;
 use tracing::info;
 use tracing_subscriber::{fmt, layer::SubscriberExt, util::SubscriberInitExt};
 
-use mini_redis::server;
-
 #[tokio::main]
 pub async fn main() -> mini_redis::Result<()> {
     config_logger()?;
 
-    let port = mini_redis::DEFAULT_PORT;
+    let port = mini_redis::config::DEFAULT_PORT;
     let listener = TcpListener::bind(&format!("127.0.0.1:{}", port)).await?;
 
     info!("server started");
-    server::run(listener, signal::ctrl_c()).await;
+    mini_redis::server::run(listener, signal::ctrl_c()).await;
     info!("server exited ");
 
     Ok(())

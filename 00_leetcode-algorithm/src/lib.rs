@@ -17,6 +17,7 @@ pub mod p187;
 pub mod p2003;
 pub mod p2103;
 pub mod p2127;
+pub mod p2342;
 pub mod p2512;
 pub mod p2520;
 pub mod p2558;

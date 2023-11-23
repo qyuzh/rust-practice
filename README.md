@@ -15,3 +15,9 @@ Minimum async runtime in unix
 ## 03 Rust Language Learning by Examples
 
 Rust language learning by examples.
+
+### 1. Implementing Vec
+
+Implement Vec using 
+- `std::ptr::{copy, read, write, NonNull}`;
+- `std::alloc::{alloc, dealloc, handle_alloc_error, realloc, Layout}`.

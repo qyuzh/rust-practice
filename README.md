@@ -21,3 +21,9 @@ Rust language learning by examples.
 Implement Vec using 
 - `std::ptr::{copy, read, write, NonNull}`;
 - `std::alloc::{alloc, dealloc, handle_alloc_error, realloc, Layout}`.
+
+### 2. Implementing Arc
+
+Implement Arc using
+- `std::ptr::NonNull`
+- `std::sync::atomic::{AtomicUsize, fence}`

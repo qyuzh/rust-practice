@@ -7,6 +7,7 @@ pub mod bw_116;
 // weekly contest
 pub mod wc_369;
 pub mod wc_370;
+pub mod wc_373;
 
 mod common;
 pub mod p1155;
@@ -45,5 +46,7 @@ pub mod p421;
 pub mod p53;
 pub mod p689;
 pub mod p715;
+pub mod p828;
 pub mod p901;
+pub mod p907;
 pub mod test;

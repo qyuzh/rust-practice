@@ -4,6 +4,10 @@
 
 The solutions for Leetcode Algorithm Problem.
 
+Some important implementations:
+
+- P1670, FrontMiddleBackQueue
+
 ## 01 Mini Redis
 
 Implementation of minimum redis using tokio.

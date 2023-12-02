@@ -22,6 +22,7 @@ pub mod p1488;
 pub mod p1657;
 pub mod p1670;
 pub mod p187;
+pub mod p1904;
 pub mod p2003;
 pub mod p2103;
 pub mod p2127;

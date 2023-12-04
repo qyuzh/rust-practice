@@ -5,11 +5,13 @@ pub mod bw_115;
 pub mod bw_116;
 
 // weekly contest
+pub mod wc374;
 pub mod wc_369;
 pub mod wc_370;
 pub mod wc_373;
 
 mod common;
+pub mod p1038;
 pub mod p1155;
 pub mod p117;
 pub mod p1334;

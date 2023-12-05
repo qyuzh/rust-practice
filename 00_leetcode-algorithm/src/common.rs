@@ -18,3 +18,15 @@ impl TreeNode {
         }
     }
 }
+
+/// if &cond then $res1 else $res2
+#[macro_export]
+macro_rules! ite {
+    ($cond:expr, $res1:expr, $res2:expr) => {
+        if $cond {
+            $res1
+        } else {
+            $res2
+        }
+    };
+}

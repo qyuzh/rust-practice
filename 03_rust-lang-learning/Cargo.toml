@@ -11,3 +11,7 @@ license.workspace = true
 tokio = { version = "1", features = ["full"] }
 pin-project = "1"
 reqwest = "0.11.4"
+regex = "1.10.2"
+
+[build-dependencies]
+cc = "1.0.83"

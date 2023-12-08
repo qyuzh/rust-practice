@@ -10,16 +10,18 @@ pub enum TokenType {
     INT,   // 123
 
     // Operators
-    ASSIGN,
     PLUS,
     MINUS,
-    BANG,
     ASTERISK,
     SLASH,
 
-    //
+    ASSIGN,
+    BANG,
+
+    // Comparators
     LT,
     GT,
+
     EQ,
     NEQ,
 
@@ -40,32 +42,6 @@ pub enum TokenType {
     IF,
     ELSE,
     RETURN,
-
-    OTHER,
-}
-
-impl From<&str> for TokenType {
-    fn from(value: &str) -> Self {
-        match value {
-            "=" => TokenType::ASSIGN,
-            "+" => TokenType::PLUS,
-            "-" => TokenType::MINUS,
-            "!" => TokenType::BANG,
-            "*" => TokenType::ASTERISK,
-            "/" => TokenType::SLASH,
-            "<" => TokenType::LT,
-            ">" => TokenType::GT,
-            "," => TokenType::COMMA,
-            ";" => TokenType::SEMICOLON,
-            "(" => TokenType::LPAREN,
-            ")" => TokenType::RPAREN,
-            "{" => TokenType::LBRACE,
-            "}" => TokenType::RBRACE,
-            "==" => TokenType::EQ,
-            "!=" => TokenType::NEQ,
-            _ => unreachable!(),
-        }
-    }
 }
 
 impl TokenType {
@@ -87,25 +63,6 @@ impl TokenType {
 pub struct Token {
     pub(crate) token_type: TokenType,
     pub(crate) literal: String,
-}
-
-impl From<char> for Token {
-    fn from(value: char) -> Self {
-        let literal: String = value.into();
-        Self {
-            token_type: literal.as_str().into(),
-            literal,
-        }
-    }
-}
-
-impl From<&str> for Token {
-    fn from(value: &str) -> Self {
-        Self {
-            token_type: value.into(),
-            literal: value.into(),
-        }
-    }
 }
 
 impl Token {

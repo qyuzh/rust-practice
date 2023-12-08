@@ -1,3 +1,7 @@
+//! `source code` -lexer-> `tokens`
+//! This transformation from source code to tokens, is called *lexical analysis*
+//! or *lexing* for short. It's done by a lexer(also called tokenizer or scanner).
+
 use std::str::Chars;
 
 use crate::token::{Token, TokenType};
@@ -25,27 +29,32 @@ impl<'a> Lexer<'a> {
         let tok;
         self.skip_white_space();
         match self.ch {
+            '+' => tok = Token::new(TokenType::PLUS, self.ch.into()),
+            '-' => tok = Token::new(TokenType::MINUS, self.ch.into()),
+            '*' => tok = Token::new(TokenType::ASTERISK, self.ch.into()),
+            '/' => tok = Token::new(TokenType::SLASH, self.ch.into()),
+            '<' => tok = Token::new(TokenType::LT, self.ch.into()),
+            '>' => tok = Token::new(TokenType::GT, self.ch.into()),
+            '(' => tok = Token::new(TokenType::LPAREN, self.ch.into()),
+            ')' => tok = Token::new(TokenType::RPAREN, self.ch.into()),
+            '{' => tok = Token::new(TokenType::LBRACE, self.ch.into()),
+            '}' => tok = Token::new(TokenType::RBRACE, self.ch.into()),
+            ',' => tok = Token::new(TokenType::COMMA, self.ch.into()),
+            ';' => tok = Token::new(TokenType::SEMICOLON, self.ch.into()),
             '=' => match self.peak_char() {
                 '=' => {
                     self.read_char();
-                    tok = "==".into();
+                    tok = Token::new(TokenType::EQ, "==".into());
                 }
-                _ => {
-                    tok = self.ch.into();
-                }
+                _ => tok = Token::new(TokenType::ASSIGN, self.ch.into()),
             },
             '!' => match self.peak_char() {
                 '=' => {
                     self.read_char();
-                    tok = "!=".into();
+                    tok = Token::new(TokenType::NEQ, "!=".into());
                 }
-                _ => {
-                    tok = self.ch.into();
-                }
+                _ => tok = Token::new(TokenType::BANG, self.ch.into()),
             },
-            '+' | '-' | '/' | '*' | '<' | '>' | ';' | ',' | '{' | '}' | '(' | ')' => {
-                tok = self.ch.into();
-            }
             a if is_letter(a) => {
                 // return directly, otherwise, line-63 will eat next char.
                 let ident = self.read_identifier();
@@ -57,7 +66,7 @@ impl<'a> Lexer<'a> {
             a if is_digit(a) => {
                 return Token::number(self.read_number());
             }
-            a if a == '\0' as char => {
+            a if a == '\0' => {
                 tok = Token::eof();
             }
             a => {
@@ -168,6 +177,65 @@ mod test {
             Token::new(TokenType::ASSIGN, "=".into()),
             Token::new(TokenType::FUNCTION, "fn".into()),
             Token::new(TokenType::LPAREN, "(".into()),
+            Token::new(TokenType::IDENT, "x".into()), // here
+            Token::new(TokenType::COMMA, ",".into()),
+            Token::new(TokenType::IDENT, "y".into()),
+            Token::new(TokenType::RPAREN, ")".into()),
+            Token::new(TokenType::LBRACE, "{".into()),
+            Token::new(TokenType::IDENT, "x".into()),
+            Token::new(TokenType::PLUS, "+".into()),
+            Token::new(TokenType::IDENT, "y".into()),
+            Token::new(TokenType::SEMICOLON, ";".into()),
+            Token::new(TokenType::RBRACE, "}".into()),
+            Token::new(TokenType::SEMICOLON, ";".into()),
+            Token::new(TokenType::LET, "let".into()),
+            Token::new(TokenType::IDENT, "result".into()),
+            Token::new(TokenType::ASSIGN, "=".into()),
+            Token::new(TokenType::IDENT, "add".into()),
+            Token::new(TokenType::LPAREN, "(".into()),
+            Token::new(TokenType::IDENT, "five".into()),
+            Token::new(TokenType::COMMA, ",".into()),
+            Token::new(TokenType::IDENT, "ten".into()),
+            Token::new(TokenType::RPAREN, ")".into()),
+            Token::new(TokenType::SEMICOLON, ";".into()),
+            Token::new(TokenType::BANG, "!".into()),
+            Token::new(TokenType::MINUS, "-".into()),
+            Token::new(TokenType::SLASH, "/".into()),
+            Token::new(TokenType::ASTERISK, "*".into()),
+            Token::new(TokenType::INT, "5".into()),
+            Token::new(TokenType::SEMICOLON, ";".into()),
+            Token::new(TokenType::INT, "5".into()),
+            Token::new(TokenType::LT, "<".into()),
+            Token::new(TokenType::INT, "10".into()),
+            Token::new(TokenType::GT, ">".into()),
+            Token::new(TokenType::INT, "5".into()),
+            Token::new(TokenType::SEMICOLON, ";".into()),
+            Token::new(TokenType::IF, "if".into()),
+            Token::new(TokenType::LPAREN, "(".into()),
+            Token::new(TokenType::INT, "5".into()),
+            Token::new(TokenType::LT, "<".into()),
+            Token::new(TokenType::INT, "10".into()),
+            Token::new(TokenType::RPAREN, ")".into()),
+            Token::new(TokenType::LBRACE, "{".into()),
+            Token::new(TokenType::RETURN, "return".into()),
+            Token::new(TokenType::TRUE, "true".into()),
+            Token::new(TokenType::SEMICOLON, ";".into()),
+            Token::new(TokenType::RBRACE, "}".into()),
+            Token::new(TokenType::ELSE, "else".into()),
+            Token::new(TokenType::LBRACE, "{".into()),
+            Token::new(TokenType::RETURN, "return".into()),
+            Token::new(TokenType::FALSE, "false".into()),
+            Token::new(TokenType::SEMICOLON, ";".into()),
+            Token::new(TokenType::RBRACE, "}".into()),
+            Token::new(TokenType::INT, "10".into()),
+            Token::new(TokenType::EQ, "==".into()),
+            Token::new(TokenType::INT, "10".into()),
+            Token::new(TokenType::SEMICOLON, ";".into()),
+            Token::new(TokenType::INT, "10".into()),
+            Token::new(TokenType::NEQ, "!=".into()),
+            Token::new(TokenType::INT, "9".into()),
+            Token::new(TokenType::SEMICOLON, ";".into()),
+            Token::new(TokenType::EOF, "".into()),
         ];
 
         let mut lexer = Lexer::new(input);

@@ -13,6 +13,8 @@
       <sourceFolder url="file://$MODULE_DIR$/01_mini-redis/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/03_rust-lang-learning/examples" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/03_rust-lang-learning/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/04_monkey-in-rust/examples" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/04_monkey-in-rust/src" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
     </content>
     <orderEntry type="inheritedJdk" />

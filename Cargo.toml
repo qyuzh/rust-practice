@@ -1,5 +1,6 @@
 [workspace]
 members = [
+    "04_monkey-in-rust",
     "03_rust-lang-learning",
     "02_mini-async-runtime-unix",
     "01_mini-redis",

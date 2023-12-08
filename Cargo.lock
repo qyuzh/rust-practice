@@ -746,6 +746,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "monkey-in-rust"
+version = "0.1.0"
+dependencies = [
+ "lazy_static",
+]
+
+[[package]]
 name = "native-tls"
 version = "0.2.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"

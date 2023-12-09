@@ -59,7 +59,7 @@ impl TokenType {
     }
 }
 
-#[derive(PartialEq, Debug)]
+#[derive(PartialEq, Debug, Clone)]
 pub struct Token {
     pub(crate) token_type: TokenType,
     pub(crate) literal: String,

@@ -1,10 +1,10 @@
 #![allow(unused)]
 
-#[macro_use]
-extern crate lazy_static;
-
 pub use repl::start;
 
+mod ast;
 mod lexer;
+mod r#macro;
+mod parser;
 mod repl;
 mod token;

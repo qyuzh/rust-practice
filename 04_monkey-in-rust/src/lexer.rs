@@ -1,5 +1,5 @@
 //! `source code` -lexer-> `tokens`
-//! This transformation from source code to tokens, is called *lexical analysis*
+//! This transformation, from source code to tokens, is called *lexical analysis*
 //! or *lexing* for short. It's done by a lexer(also called tokenizer or scanner).
 
 use std::str::Chars;
@@ -177,7 +177,7 @@ mod test {
             Token::new(TokenType::ASSIGN, "=".into()),
             Token::new(TokenType::FUNCTION, "fn".into()),
             Token::new(TokenType::LPAREN, "(".into()),
-            Token::new(TokenType::IDENT, "x".into()), // here
+            Token::new(TokenType::IDENT, "x".into()),
             Token::new(TokenType::COMMA, ",".into()),
             Token::new(TokenType::IDENT, "y".into()),
             Token::new(TokenType::RPAREN, ")".into()),

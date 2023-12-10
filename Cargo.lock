@@ -749,6 +749,7 @@ dependencies = [
 name = "monkey-in-rust"
 version = "0.1.0"
 dependencies = [
+ "atoi",
  "lazy_static",
  "whoami",
 ]

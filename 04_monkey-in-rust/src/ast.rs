@@ -1,7 +1,7 @@
 use std::any::Any;
 
 use crate::token::Token;
-use crate::{impl_node, impl_statement};
+use crate::{impl_expression, impl_node, impl_statement};
 
 pub trait Node {
     fn token_literal(&self) -> &str;
@@ -16,6 +16,7 @@ pub trait Expression: Node {
     fn expression_node(&self);
 }
 
+/// A program consists of some statements
 pub struct Program {
     pub statements: Vec<Box<dyn Statement>>,
 }
@@ -46,5 +47,47 @@ pub struct Identifier {
     pub value: String,
 }
 
-impl_node!(LetStatement, ReturnStatement, Identifier);
-impl_statement!(LetStatement, ReturnStatement, Identifier);
+pub struct ExpressionStatement {
+    pub token: Token,
+    pub expression: Box<dyn Expression>,
+}
+
+pub struct IntegerLiteral {
+    pub token: Token,
+    pub value: i64,
+}
+
+pub struct PrefixExpression {
+    pub token: Token,
+    pub operator: String,
+    pub right: Box<dyn Expression>,
+}
+
+pub struct InfixExpression {
+    pub token: Token,
+    pub left: Box<dyn Expression>,
+    pub operator: String,
+    pub right: Box<dyn Expression>,
+}
+
+impl_node!(
+    LetStatement,
+    ReturnStatement,
+    Identifier,
+    ExpressionStatement,
+    IntegerLiteral,
+    PrefixExpression,
+    InfixExpression,
+);
+impl_statement!(
+    LetStatement,
+    ReturnStatement,
+    Identifier,
+    ExpressionStatement,
+);
+impl_expression!(
+    Identifier,
+    IntegerLiteral,
+    PrefixExpression,
+    InfixExpression,
+);

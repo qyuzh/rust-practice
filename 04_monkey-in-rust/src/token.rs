@@ -1,6 +1,6 @@
 use std::convert::Into;
 
-#[derive(PartialEq, Debug, Clone)]
+#[derive(PartialEq, Debug, Clone, Eq, Hash, Copy)]
 pub enum TokenType {
     ILLEGAL,
     EOF,

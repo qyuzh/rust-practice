@@ -10,3 +10,4 @@ license.workspace = true
 [dependencies]
 lazy_static = "1.4.0"
 whoami="1.4.1"
+atoi = "2"

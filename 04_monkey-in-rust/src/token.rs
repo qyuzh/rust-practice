@@ -1,59 +1,61 @@
 use std::convert::Into;
 
+use crate::impl_display_for_struct;
+
 #[derive(PartialEq, Debug, Clone, Eq, Hash, Copy)]
 pub enum TokenType {
-    ILLEGAL,
-    EOF,
+    Illegal,
+    Eof,
 
     // Identifiers + literals
-    IDENT, // add, foobar, x, y
-    INT,   // 123
+    Ident, // add, foobar, x, y
+    Int,   // 123
 
     // Operators
-    PLUS,
-    MINUS,
-    ASTERISK,
-    SLASH,
+    Plus,
+    Minus,
+    Asterisk,
+    Slash,
 
-    ASSIGN,
-    BANG,
+    Assign,
+    Bang,
 
     // Comparators
     LT,
     GT,
 
-    EQ,
-    NEQ,
+    Eq,
+    NEq,
 
     // Delimiters
-    COMMA,
-    SEMICOLON,
+    Comma,
+    Semicolon,
 
-    LPAREN,
-    RPAREN,
-    LBRACE,
-    RBRACE,
+    LParen,
+    RParen,
+    LBrace,
+    RBrace,
 
     // Keywords
-    FUNCTION,
-    LET,
-    TRUE,
-    FALSE,
-    IF,
-    ELSE,
-    RETURN,
+    Function,
+    Let,
+    True,
+    False,
+    If,
+    Else,
+    Return,
 }
 
 impl TokenType {
     pub fn lookup_keyword(s: &str) -> Option<TokenType> {
         match s {
-            "fn" => Some(TokenType::FUNCTION),
-            "let" => Some(TokenType::LET),
-            "true" => Some(TokenType::TRUE),
-            "false" => Some(TokenType::FALSE),
-            "if" => Some(TokenType::IF),
-            "else" => Some(TokenType::ELSE),
-            "return" => Some(TokenType::RETURN),
+            "fn" => Some(TokenType::Function),
+            "let" => Some(TokenType::Let),
+            "true" => Some(TokenType::True),
+            "false" => Some(TokenType::False),
+            "if" => Some(TokenType::If),
+            "else" => Some(TokenType::Else),
+            "return" => Some(TokenType::Return),
             _ => None,
         }
     }
@@ -65,6 +67,8 @@ pub struct Token {
     pub(crate) literal: String,
 }
 
+impl_display_for_struct!(Token: literal:);
+
 impl Token {
     pub fn new(token_type: TokenType, literal: String) -> Token {
         Token {
@@ -74,18 +78,18 @@ impl Token {
     }
 
     pub fn eof() -> Token {
-        Token::new(TokenType::EOF, "".into())
+        Token::new(TokenType::Eof, "".into())
     }
 
     pub fn illegal(ch: char) -> Token {
-        Token::new(TokenType::ILLEGAL, ch.into())
+        Token::new(TokenType::Illegal, ch.into())
     }
 
     pub fn number(s: String) -> Token {
-        Token::new(TokenType::INT, s)
+        Token::new(TokenType::Int, s)
     }
 
     pub fn ident(s: String) -> Token {
-        Token::new(TokenType::IDENT, s)
+        Token::new(TokenType::Ident, s)
     }
 }

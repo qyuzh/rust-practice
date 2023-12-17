@@ -1,8 +1,13 @@
+//! `tokens` -parser-> `ast`
+//! Top-down operator precedence parser or Pratt parser, that is a
+//! recursive descent parser
+
 use std::collections::HashMap;
 
 use crate::ast::{
-    Expression, ExpressionStatement, Identifier, InfixExpression, IntegerLiteral, PrefixExpression,
-    ReturnStatement, Statement,
+    BlockStatement, Boolean, CallExpression, Expression, ExpressionStatement, FunctionLiteral,
+    Identifier, IfExpression, InfixExpression, IntegerLiteral, PrefixExpression, ReturnStatement,
+    Statement,
 };
 use crate::ast::{LetStatement, Program};
 use crate::lexer::Lexer;
@@ -25,14 +30,15 @@ enum Precedence {
 impl Precedence {
     fn lookup(token_type: &TokenType) -> Precedence {
         match token_type {
-            TokenType::MINUS => Precedence::Sum,
-            TokenType::PLUS => Precedence::Sum,
-            TokenType::ASTERISK => Precedence::Product,
-            TokenType::SLASH => Precedence::Product,
+            TokenType::Minus => Precedence::Sum,
+            TokenType::Plus => Precedence::Sum,
+            TokenType::Asterisk => Precedence::Product,
+            TokenType::Slash => Precedence::Product,
             TokenType::LT => Precedence::LessGreater,
             TokenType::GT => Precedence::LessGreater,
-            TokenType::EQ => Precedence::Equals,
-            TokenType::NEQ => Precedence::Equals,
+            TokenType::Eq => Precedence::Equals,
+            TokenType::NEq => Precedence::Equals,
+            TokenType::LParen => Precedence::Call,
             _ => Precedence::Lowest,
         }
     }
@@ -57,19 +63,23 @@ impl<'a> Parser<'a> {
             infix_parse_fns: HashMap::new(),
         };
 
-        p.register_prefix(TokenType::IDENT, Self::parse_identifier);
-        p.register_prefix(TokenType::INT, Self::parse_integer_literal);
-        p.register_prefix(TokenType::BANG, Self::parse_prefix_expression);
-        p.register_prefix(TokenType::MINUS, Self::parse_prefix_expression);
+        p.register_prefix(TokenType::Ident, Self::parse_identifier);
+        p.register_prefix(TokenType::Int, Self::parse_integer_literal);
+        p.register_prefix(TokenType::Bang, Self::parse_prefix_expression);
+        p.register_prefix(TokenType::Minus, Self::parse_prefix_expression);
+        p.register_prefix(TokenType::True, Self::parse_boolean);
+        p.register_prefix(TokenType::LParen, Self::parse_grouped_expression);
+        p.register_prefix(TokenType::If, Self::parse_if_expression);
 
-        p.register_infix(TokenType::PLUS, Self::parse_infix_expression);
-        p.register_infix(TokenType::MINUS, Self::parse_infix_expression);
-        p.register_infix(TokenType::SLASH, Self::parse_infix_expression);
-        p.register_infix(TokenType::ASTERISK, Self::parse_infix_expression);
-        p.register_infix(TokenType::EQ, Self::parse_infix_expression);
-        p.register_infix(TokenType::NEQ, Self::parse_infix_expression);
+        p.register_infix(TokenType::Plus, Self::parse_infix_expression);
+        p.register_infix(TokenType::Minus, Self::parse_infix_expression);
+        p.register_infix(TokenType::Slash, Self::parse_infix_expression);
+        p.register_infix(TokenType::Asterisk, Self::parse_infix_expression);
+        p.register_infix(TokenType::Eq, Self::parse_infix_expression);
+        p.register_infix(TokenType::NEq, Self::parse_infix_expression);
         p.register_infix(TokenType::LT, Self::parse_infix_expression);
         p.register_infix(TokenType::GT, Self::parse_infix_expression);
+        p.register_infix(TokenType::LParen, Self::parse_call_expression);
 
         p.next_token();
         p.next_token();
@@ -84,14 +94,13 @@ impl<'a> Parser<'a> {
             }
             self.next_token();
         }
-
         Program { statements }
     }
 
     fn parse_statement(&mut self) -> Option<Box<dyn Statement>> {
         match self.cur_token.as_ref().unwrap().token_type {
-            TokenType::LET => self.parse_let_statement(),
-            TokenType::RETURN => self.parse_return_statement(),
+            TokenType::Let => self.parse_let_statement(),
+            TokenType::Return => self.parse_return_statement(),
             _ => self.parse_expression_statement(),
         }
     }
@@ -99,16 +108,20 @@ impl<'a> Parser<'a> {
     fn parse_let_statement(&mut self) -> Option<Box<dyn Statement>> {
         let token_let = self.cur_token.clone().unwrap();
 
-        if !self.expect_token(TokenType::IDENT) {
+        if !self.expect_token(TokenType::Ident) {
             return None;
         }
         let token_ident = self.cur_token.clone().unwrap();
 
-        if !self.expect_token(TokenType::ASSIGN) {
+        if !self.expect_token(TokenType::Assign) {
             return None;
         }
 
-        while !self.cur_token_is(TokenType::SEMICOLON) {
+        self.next_token();
+
+        let exp = self.parse_expression(Precedence::Lowest).unwrap();
+
+        if self.peek_token_is(TokenType::Semicolon) {
             self.next_token();
         }
 
@@ -118,19 +131,20 @@ impl<'a> Parser<'a> {
                 value: token_ident.literal.clone(),
                 token: token_ident,
             },
-            value: None,
+            value: Some(exp),
         }))
     }
 
     fn parse_return_statement(&mut self) -> Option<Box<dyn Statement>> {
         let token_ret = self.cur_token.take().unwrap();
         self.next_token();
-        while !self.cur_token_is(TokenType::SEMICOLON) {
+        let exp = self.parse_expression(Precedence::Lowest).unwrap();
+        if self.peek_token_is(TokenType::Semicolon) {
             self.next_token();
         }
         Some(Box::new(ReturnStatement {
             token: token_ret,
-            value: None,
+            value: Some(exp),
         }))
     }
 
@@ -139,7 +153,7 @@ impl<'a> Parser<'a> {
             token: self.cur_token.clone().unwrap(),
             expression: self.parse_expression(Precedence::Lowest).unwrap(),
         };
-        if self.peek_token_is(TokenType::SEMICOLON) {
+        if self.peek_token_is(TokenType::Semicolon) {
             self.next_token();
         }
         Some(Box::new(stmt))
@@ -152,7 +166,7 @@ impl<'a> Parser<'a> {
         {
             let mut left = f(self);
 
-            while !self.peek_token_is(TokenType::SEMICOLON) && precedence < self.peek_precedence() {
+            while !self.peek_token_is(TokenType::Semicolon) && precedence < self.peek_precedence() {
                 let token_type = self.peek_token.as_ref().unwrap().token_type;
 
                 if !self.infix_parse_fns.contains_key(&token_type) {
@@ -210,10 +224,168 @@ impl<'a> Parser<'a> {
         })
     }
 
+    fn parse_boolean(&mut self) -> Box<dyn Expression> {
+        Box::new(Boolean {
+            token: self.cur_token.clone().unwrap(),
+            value: self.cur_token_is(TokenType::True),
+        })
+    }
+
+    fn parse_grouped_expression(&mut self) -> Box<dyn Expression> {
+        self.next_token();
+        let exp = self.parse_expression(Precedence::Lowest);
+        if !self.expect_token(TokenType::RParen) {
+            todo!()
+        }
+        exp.unwrap()
+    }
+
+    fn parse_if_expression(&mut self) -> Box<dyn Expression> {
+        let cur_token = self.cur_token.clone().unwrap();
+
+        if !self.expect_token(TokenType::LParen) {
+            todo!("expect TokenType::LParen in parse_if_expression");
+        }
+
+        self.next_token();
+        let condition = self.parse_expression(Precedence::Lowest).unwrap();
+
+        if !self.expect_token(TokenType::RParen) {
+            todo!("expect TokenType::RParen in parse_if_expression");
+        }
+
+        if !self.expect_token(TokenType::LBrace) {
+            todo!("expect TokenType::LBrace in parse_if_expression");
+        }
+
+        let consequence = self.parse_block_statement();
+
+        let mut alternative = None;
+        if self.peek_token_is(TokenType::Else) {
+            self.next_token();
+            if !self.expect_token(TokenType::LBrace) {
+                todo!("expect TokenType::LBrace in parse_if_expression else branch");
+            }
+            alternative = Some(self.parse_block_statement());
+        }
+
+        Box::new(IfExpression {
+            token: cur_token,
+            condition,
+            consequence,
+            alternative,
+        })
+    }
+
+    fn parse_function_literal(&mut self) -> Box<dyn Expression> {
+        let cur_token = self.cur_token.clone().unwrap();
+
+        if !self.peek_token_is(TokenType::LParen) {
+            todo!("expect TokenType::LParen in parse_function_literal");
+        }
+
+        let parameters = self.parse_function_parameters();
+
+        if !self.peek_token_is(TokenType::RParen) {
+            todo!("expect TokenType::RParen in parse_function_literal");
+        }
+
+        let body = self.parse_block_statement();
+
+        Box::new(FunctionLiteral {
+            token: cur_token,
+            parameters,
+            body,
+        })
+    }
+
+    fn parse_function_parameters(&mut self) -> Vec<Identifier> {
+        let mut parameters = Vec::new();
+
+        if self.peek_token_is(TokenType::RParen) {
+            // fn () {}
+            return parameters;
+        }
+
+        self.next_token();
+        parameters.push(Identifier {
+            token: self.cur_token.clone().unwrap(),
+            value: self.cur_token.as_ref().unwrap().literal.clone(),
+        });
+
+        while self.peek_token_is(TokenType::Comma) {
+            self.next_token(); // eat comma
+            self.next_token();
+            parameters.push(Identifier {
+                token: self.cur_token.clone().unwrap(),
+                value: self.cur_token.as_ref().unwrap().literal.clone(),
+            });
+        }
+
+        if !self.expect_token(TokenType::RParen) {
+            todo!("expect TokenType::RParen in parse_function_parameters")
+        }
+
+        parameters
+    }
+
+    fn parse_block_statement(&mut self) -> BlockStatement {
+        let cur_token = self.cur_token.clone().unwrap();
+        let mut statements = Vec::new();
+
+        self.next_token();
+        while let Some(_) = self.cur_token {
+            if self.cur_token_is(TokenType::RBrace) {
+                break;
+            }
+            if let Some(stmt) = self.parse_statement() {
+                statements.push(stmt);
+            }
+            self.next_token();
+        }
+
+        BlockStatement {
+            token: cur_token,
+            statements,
+        }
+    }
+
+    fn parse_call_expression(&mut self, f: Box<dyn Expression>) -> Box<dyn Expression> {
+        Box::new(CallExpression {
+            token: self.cur_token.clone().unwrap(),
+            function: f,
+            arguments: self.parse_call_arguments(),
+        })
+    }
+
+    fn parse_call_arguments(&mut self) -> Vec<Box<dyn Expression>> {
+        let mut args = Vec::new();
+
+        if self.peek_token_is(TokenType::RParen) {
+            self.next_token();
+            return args;
+        }
+
+        self.next_token();
+        args.push(self.parse_expression(Precedence::Lowest).unwrap());
+
+        while self.peek_token_is(TokenType::Comma) {
+            self.next_token();
+            self.next_token();
+            args.push(self.parse_expression(Precedence::Lowest).unwrap());
+        }
+
+        if !self.peek_token_is(TokenType::RParen) {
+            todo!("expect TokenType::RParen in parse_call_arguments");
+        }
+
+        args
+    }
+
     fn next_token(&mut self) {
         self.cur_token = self.peek_token.take();
         let token = self.l.next_token();
-        if token.token_type == TokenType::EOF {
+        if token.token_type == TokenType::Eof {
             self.peek_token = None;
         } else {
             self.peek_token = Some(token);
@@ -287,8 +459,10 @@ mod test {
         for t in tests.iter().zip(program.statements.iter()) {
             let ls = t.1.as_any().downcast_ref::<LetStatement>().unwrap();
             assert_eq!(*(t.0), ls.name.value);
-            assert_eq!(TokenType::LET, ls.token.token_type);
+            assert_eq!(TokenType::Let, ls.token.token_type);
         }
+
+        println!("{}", program);
     }
 
     #[test]
@@ -310,7 +484,7 @@ mod test {
 
         for t in program.statements.iter() {
             let rs = t.as_any().downcast_ref::<ReturnStatement>().unwrap();
-            assert_eq!(rs.token.token_type, TokenType::RETURN);
+            assert_eq!(rs.token.token_type, TokenType::Return);
         }
     }
 

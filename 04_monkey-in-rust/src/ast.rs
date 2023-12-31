@@ -1,6 +1,4 @@
 use std::any::Any;
-use std::fmt;
-use std::fmt::Formatter;
 
 use crate::token::Token;
 use crate::{
@@ -135,14 +133,13 @@ impl_expression!(
     CallExpression,
 );
 
-impl fmt::Display for Box<dyn Expression> {
-    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-        write!(f, "<expression>\n")
-    }
-}
-
 impl_display_for!(Statement: LetStatement, ExpressionStatement,);
+impl_display_for!(Expression: PrefixExpression, InfixExpression, IntegerLiteral, BooleanLiteral,);
 impl_display_for_struct!(Program: v = statements,);
 impl_display_for_struct!(LetStatement: token, name, value,);
 impl_display_for_struct!(Identifier: token, value,);
 impl_display_for_struct!(ExpressionStatement: token, expression,);
+impl_display_for_struct!(PrefixExpression: token, operator, right,);
+impl_display_for_struct!(InfixExpression: token, operator, left, right,);
+impl_display_for_struct!(IntegerLiteral: token, value,);
+impl_display_for_struct!(BooleanLiteral: token, value,);

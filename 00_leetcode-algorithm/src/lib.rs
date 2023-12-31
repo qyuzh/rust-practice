@@ -8,6 +8,7 @@ pub mod bw_119;
 // weekly contest
 pub mod wc374;
 pub mod wc377;
+pub mod wc378;
 pub mod wc_369;
 pub mod wc_370;
 pub mod wc_373;

@@ -1,5 +1,3 @@
-use std::convert::Into;
-
 use crate::impl_display_for_struct;
 
 #[derive(PartialEq, Debug, Clone, Eq, Hash, Copy)]
@@ -67,8 +65,6 @@ pub struct Token {
     pub(crate) literal: String,
 }
 
-impl_display_for_struct!(Token: literal;);
-
 impl Token {
     pub fn new(token_type: TokenType, literal: String) -> Token {
         Token {
@@ -93,3 +89,5 @@ impl Token {
         Token::new(TokenType::Ident, s)
     }
 }
+
+impl_display_for_struct!(Token: literal, );

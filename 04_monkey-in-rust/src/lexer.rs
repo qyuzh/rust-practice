@@ -59,6 +59,7 @@ impl<'a> Lexer<'a> {
                 // return directly, otherwise, line-63 will eat next char.
                 let ident = self.read_identifier();
                 if let Some(keyword_type) = TokenType::lookup_keyword(ident.as_str()) {
+                    // println!("{keyword_type:?} {ident}");
                     return Token::new(keyword_type, ident);
                 }
                 return Token::ident(ident);

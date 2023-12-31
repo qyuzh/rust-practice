@@ -5,9 +5,9 @@
 use std::collections::HashMap;
 
 use crate::ast::{
-    BlockStatement, Boolean, CallExpression, Expression, ExpressionStatement, FunctionLiteral,
-    Identifier, IfExpression, InfixExpression, IntegerLiteral, PrefixExpression, ReturnStatement,
-    Statement,
+    BlockStatement, BooleanLiteral, CallExpression, Expression, ExpressionStatement,
+    FunctionLiteral, Identifier, IfExpression, InfixExpression, IntegerLiteral, PrefixExpression,
+    ReturnStatement, Statement,
 };
 use crate::ast::{LetStatement, Program};
 use crate::lexer::Lexer;
@@ -44,7 +44,7 @@ impl Precedence {
     }
 }
 
-struct Parser<'a> {
+pub struct Parser<'a> {
     l: Lexer<'a>,
     cur_token: Token,
     peek_token: Token,
@@ -53,7 +53,7 @@ struct Parser<'a> {
 }
 
 impl<'a> Parser<'a> {
-    fn new(lexer: Lexer<'a>) -> Self {
+    pub fn new(lexer: Lexer<'a>) -> Self {
         let mut p = Self {
             l: lexer,
             cur_token: Token::eof(),
@@ -66,7 +66,8 @@ impl<'a> Parser<'a> {
         p.register_prefix(TokenType::Int, Self::parse_integer_literal);
         p.register_prefix(TokenType::Bang, Self::parse_prefix_expression);
         p.register_prefix(TokenType::Minus, Self::parse_prefix_expression);
-        p.register_prefix(TokenType::True, Self::parse_boolean);
+        p.register_prefix(TokenType::True, Self::parse_boolean_literal);
+        p.register_prefix(TokenType::False, Self::parse_boolean_literal);
         p.register_prefix(TokenType::LParen, Self::parse_grouped_expression);
         p.register_prefix(TokenType::If, Self::parse_if_expression);
 
@@ -85,7 +86,7 @@ impl<'a> Parser<'a> {
         p
     }
 
-    fn parse_program(&mut self) -> Program {
+    pub fn parse_program(&mut self) -> Program {
         let mut statements = Vec::new();
         while self.cur_token.token_type != TokenType::EOF {
             if let Some(stmt) = self.parse_statement() {
@@ -225,8 +226,8 @@ impl<'a> Parser<'a> {
         })
     }
 
-    fn parse_boolean(&mut self) -> Box<dyn Expression> {
-        Box::new(Boolean {
+    fn parse_boolean_literal(&mut self) -> Box<dyn Expression> {
+        Box::new(BooleanLiteral {
             token: self.cur_token.clone(),
             value: self.cur_token_is(TokenType::True),
         })
@@ -614,5 +615,13 @@ mod test {
                 5
             );
         }
+    }
+
+    #[test]
+    fn display() {
+        let mut lexer = Lexer::new("true;false");
+        let mut p = Parser::new(lexer);
+        let program = p.parse_program();
+        println!("{program}");
     }
 }

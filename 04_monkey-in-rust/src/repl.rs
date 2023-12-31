@@ -3,8 +3,9 @@
 use std::io;
 use std::io::{BufRead, Write};
 
+use crate::evaluator::eval;
 use crate::lexer::Lexer;
-use crate::token::Token;
+use crate::parser::Parser;
 
 const PROMPT: &str = ">> ";
 const EXIT: &str = ".exit";
@@ -23,11 +24,19 @@ pub fn start(std_in: io::Stdin, mut std_out: io::Stdout) {
         }
 
         let mut lexer = Lexer::new(sc.as_ref());
-        let mut tok = lexer.next_token();
-        std_out.write_all(format!("{tok:?}\n").as_ref());
-        while tok != Token::eof() {
-            tok = lexer.next_token();
-            std_out.write_all(format!("{tok:?}\n").as_ref());
-        }
+
+        // let mut tok = lexer.next_token();
+        // std_out.write_all(format!("{tok:?}\n").as_ref());
+        // while tok != Token::eof() {
+        //     tok = lexer.next_token();
+        //     std_out.write_all(format!("{tok:?}\n").as_ref());
+        // }
+        //
+
+        let mut p = Parser::new(lexer);
+        let program = p.parse_program();
+        let evaluated = eval(&program);
+        std_out.write_all(evaluated.inspect().as_ref());
+        std_out.write_all(b"\n");
     }
 }

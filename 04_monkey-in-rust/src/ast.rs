@@ -16,41 +16,13 @@ pub trait Statement: Node {
     fn statement_node(&self);
 }
 
-impl_display_for!(Statement: LetStatement,);
-
 pub trait Expression: Node {
     fn expression_node(&self);
-}
-
-impl fmt::Display for Box<dyn Expression> {
-    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-        write!(f, "<expression>\n")
-    }
 }
 
 /// A program consists of some statements
 pub struct Program {
     pub statements: Vec<Box<dyn Statement>>,
-}
-
-impl Program {
-    fn token_literal(&self) -> &str {
-        return if self.statements.len() > 0 {
-            self.statements[0].token_literal()
-        } else {
-            ""
-        };
-    }
-}
-
-impl fmt::Display for Program {
-    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-        let mut s = String::new();
-        self.statements
-            .iter()
-            .for_each(|v| s.push_str(&format!("{v}")));
-        write!(f, "{s}")
-    }
 }
 
 /// `let <identifier> = <expression>`
@@ -59,8 +31,6 @@ pub struct LetStatement {
     pub name: Identifier,
     pub value: Box<dyn Expression>,
 }
-
-impl_display_for_struct!(LetStatement: token, value;);
 
 /// `return <expression>`
 pub struct ReturnStatement {
@@ -84,7 +54,7 @@ pub struct IntegerLiteral {
     pub value: i64,
 }
 
-pub struct Boolean {
+pub struct BooleanLiteral {
     pub token: Token,
     pub value: bool,
 }
@@ -125,7 +95,14 @@ pub struct CallExpression {
     pub function: Box<dyn Expression>, // Identifier or FunctionLiteral
     pub arguments: Vec<Box<dyn Expression>>,
 }
-
+impl Node for Program {
+    fn token_literal(&self) -> &str {
+        "program"
+    }
+    fn as_any(&self) -> &dyn Any {
+        self
+    }
+}
 impl_node!(
     LetStatement,
     ReturnStatement,
@@ -134,7 +111,7 @@ impl_node!(
     IntegerLiteral,
     PrefixExpression,
     InfixExpression,
-    Boolean,
+    BooleanLiteral,
     IfExpression,
     BlockStatement,
     FunctionLiteral,
@@ -152,8 +129,20 @@ impl_expression!(
     IntegerLiteral,
     PrefixExpression,
     InfixExpression,
-    Boolean,
+    BooleanLiteral,
     IfExpression,
     FunctionLiteral,
     CallExpression,
 );
+
+impl fmt::Display for Box<dyn Expression> {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        write!(f, "<expression>\n")
+    }
+}
+
+impl_display_for!(Statement: LetStatement, ExpressionStatement,);
+impl_display_for_struct!(Program: v = statements,);
+impl_display_for_struct!(LetStatement: token, name, value,);
+impl_display_for_struct!(Identifier: token, value,);
+impl_display_for_struct!(ExpressionStatement: token, expression,);

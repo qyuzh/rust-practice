@@ -4,7 +4,7 @@ pub use repl::start;
 
 mod ast;
 mod lexer;
-mod r#macro;
+mod macros;
 mod parser;
 mod repl;
 mod token;

@@ -18,7 +18,7 @@ pub fn start(std_in: io::Stdin, mut std_out: io::Stdout) {
         let _ = std_in.read_line(&mut sc);
 
         if sc.starts_with(EXIT) {
-            std_out.write_all(format!("bye~").as_ref());
+            std_out.write_all(b"bye~");
             break;
         }
 

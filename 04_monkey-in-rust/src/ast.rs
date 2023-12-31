@@ -57,15 +57,15 @@ impl fmt::Display for Program {
 pub struct LetStatement {
     pub token: Token, // TokenType::Let
     pub name: Identifier,
-    pub value: Option<Box<dyn Expression>>,
+    pub value: Box<dyn Expression>,
 }
 
-impl_display_for_struct!(LetStatement: token: value);
+impl_display_for_struct!(LetStatement: token, value;);
 
 /// `return <expression>`
 pub struct ReturnStatement {
     pub token: Token, // TokenType::Return
-    pub value: Option<Box<dyn Expression>>,
+    pub value: Box<dyn Expression>,
 }
 
 #[derive(Debug)]

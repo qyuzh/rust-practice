@@ -1,5 +1,6 @@
-use std::fmt;
-use std::fmt::{Display, Formatter};
+use std::{fmt, io};
+
+use monkey_in_rust::start;
 
 const IDENT_SIZE: usize = 2;
 const EMPTY_STR: &str = "";
@@ -7,7 +8,7 @@ const EMPTY_STR: &str = "";
 struct A(i32);
 
 impl fmt::Display for A {
-    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{}\n", self.0)
     }
 }
@@ -17,7 +18,7 @@ struct B {
 }
 
 impl fmt::Display for B {
-    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let mut w = 0;
         if let Some(width) = f.width() {
             w = width;
@@ -42,7 +43,7 @@ struct C {
 }
 
 impl fmt::Display for C {
-    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let mut w = 0;
         if let Some(width) = f.width() {
             w = width;
@@ -66,16 +67,16 @@ impl fmt::Display for C {
 }
 
 fn main() {
-    // println!(
-    //     "Hello {}! This is the Monkey programming language!",
-    //     whoami::username()
-    // );
-    // println!("Feel free to type in commands!");
-    // start(io::stdin(), io::stdout());
-    let c = C {
-        b: B { a: A(0) },
-        a: A(1),
-        bb: B { a: A(2) },
-    };
-    println!("{c}");
+    println!(
+        "Hello {}! This is the Monkey programming language!",
+        whoami::username()
+    );
+    println!("Feel free to type in commands!");
+    start(io::stdin(), io::stdout());
+    // let c = C {
+    //     b: B { a: A(0) },
+    //     a: A(1),
+    //     bb: B { a: A(2) },
+    // };
+    // println!("{c}");
 }

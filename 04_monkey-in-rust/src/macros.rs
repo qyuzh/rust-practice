@@ -47,7 +47,7 @@ macro_rules! impl_display_for {
 
 #[macro_export]
 macro_rules! impl_display_for_struct {
-    ($ts:ty: $($t: tt),+: $($to: tt),*) => {
+    ($ts:ty: $($t: tt),+; $($to: tt),*) => {
         impl std::fmt::Display for $ts {
             fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
                 const IDENT_SIZE: usize = 2;

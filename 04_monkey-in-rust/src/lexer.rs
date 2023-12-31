@@ -235,7 +235,7 @@ mod test {
             Token::new(TokenType::NEq, "!=".into()),
             Token::new(TokenType::Int, "9".into()),
             Token::new(TokenType::Semicolon, ";".into()),
-            Token::new(TokenType::Eof, "".into()),
+            Token::new(TokenType::EOF, "".into()),
         ];
 
         let mut lexer = Lexer::new(input);

@@ -19,8 +19,8 @@ pub fn insert_greatest_common_divisors(mut head: Option<Box<ListNode>>) -> Optio
                 let mut mid = ListNode::new(gcd(p2.val, p3r.val));
                 mid.next = p3;
                 p2.next = Some(Box::new(mid));
-                // SAFETY: p2 and p3 all exist imply p.next.next exists
-                p = &mut p.as_mut().unwrap().next.as_mut().unwrap().next;
+                // SAFETY: p2.next is Some
+                p = &mut p2.next.as_mut().unwrap().next
             }
             None => break,
         }

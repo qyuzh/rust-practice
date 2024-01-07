@@ -3,12 +3,17 @@ pub use common::TreeNode;
 // bi-weekly contest
 pub mod bw_115;
 pub mod bw_116;
+pub mod bw_119;
 
 // weekly contest
 pub mod wc374;
+pub mod wc377;
+pub mod wc378;
 pub mod wc_369;
 pub mod wc_370;
 pub mod wc_373;
+pub mod wc_375;
+pub mod wc_376;
 
 mod common;
 pub mod p1038;
@@ -23,11 +28,14 @@ pub mod p1457;
 pub mod p1465;
 pub mod p1466;
 pub mod p1488;
+pub mod p1613;
 pub mod p1657;
 pub mod p1670;
 pub mod p187;
 pub mod p1904;
 pub mod p2003;
+pub mod p2008;
+pub mod p2048;
 pub mod p2103;
 pub mod p2127;
 pub mod p2216;
@@ -51,6 +59,7 @@ pub mod p2736;
 pub mod p274;
 pub mod p275;
 pub mod p2760;
+pub mod p2807;
 pub mod p2824;
 pub mod p318;
 pub mod p421;
@@ -61,3 +70,4 @@ pub mod p828;
 pub mod p901;
 pub mod p907;
 pub mod test;
+pub mod w379;

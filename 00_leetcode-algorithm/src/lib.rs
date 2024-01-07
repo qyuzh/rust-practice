@@ -70,3 +70,4 @@ pub mod p828;
 pub mod p901;
 pub mod p907;
 pub mod test;
+pub mod w379;

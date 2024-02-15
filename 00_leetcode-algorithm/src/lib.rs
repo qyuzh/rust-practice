@@ -17,6 +17,7 @@ pub mod wc_376;
 
 mod common;
 pub mod p1038;
+pub mod p107;
 pub mod p1155;
 pub mod p117;
 pub mod p1334;

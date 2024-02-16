@@ -1,3 +1,5 @@
+#![allow(unused)]
+
 pub use common::TreeNode;
 
 // bi-weekly contest
@@ -16,6 +18,7 @@ pub mod wc_375;
 pub mod wc_376;
 
 mod common;
+pub mod p103;
 pub mod p1038;
 pub mod p107;
 pub mod p1155;

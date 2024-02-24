@@ -28,7 +28,7 @@ fn mut_move() {
     let a = &mut num;
     let b = a; // move
     *b += 1;
-    *a += 1;
+    // *a += 1; try uncomment
 }
 
 fn main() {}

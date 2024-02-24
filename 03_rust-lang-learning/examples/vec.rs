@@ -41,7 +41,7 @@ fn my_vec() {
 
 fn main() {
     zst();
-    // non_zst();
+    non_zst();
     my_vec();
 
     let p = "123".to_string();

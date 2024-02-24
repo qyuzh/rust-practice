@@ -218,7 +218,7 @@ mod test {
     #[test]
     fn frame_parse_simple_string() {
         let mut buf = gen_cursor_with_buf(b"+Ok\r\n");
-        if let Ok(Frame::Simple(s)) = Frame::parse(&mut buf) {
+        if let Ok(Frame::Simple(_s)) = Frame::parse(&mut buf) {
             assert!(true);
         } else {
             assert!(false)

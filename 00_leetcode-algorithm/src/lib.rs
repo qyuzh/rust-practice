@@ -35,6 +35,7 @@ pub mod p1488;
 pub mod p1613;
 pub mod p1657;
 pub mod p1670;
+pub mod p1793;
 pub mod p187;
 pub mod p1904;
 pub mod p2003;

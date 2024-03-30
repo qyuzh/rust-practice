@@ -75,6 +75,7 @@ pub mod p275;
 pub mod p2760;
 pub mod p2807;
 pub mod p2824;
+pub mod p2952;
 pub mod p299;
 pub mod p318;
 pub mod p322;

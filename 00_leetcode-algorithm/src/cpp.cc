@@ -64,4 +64,46 @@ long long findKthSmallest(vector<int> &coins, int k) {
     return l;
 }
 
+// P1883
+int minSkips(vector<int> &dist, int speed, int hoursBefore) {
+    if (accumulate(dist.begin(), dist.end(), 0) >
+        (long long)speed * hoursBefore) {
+        return -1;
+    }
+
+    int n = dist.size();
+
+    vector<vector<int>> memo(n, vector<int>(n, -1));
+
+    // dfs(i,j) := (在最多跳过i次的情况下, 从dist[0]到dist[j]需要的最小时间) *
+    // speed
+    function<int(int, int)> dfs = [&](int i, int j) -> int {
+        if (j < 0) {
+            return 0;
+        }
+
+        auto &res = memo[i][j];
+
+        if (res != -1) {
+            return res;
+        }
+
+        // 本次不跳过
+        res = (dfs(i, j - 1) + dist[j] + speed - 1) / speed * speed;
+
+        // 本次跳过
+        if (i > 0) {
+            res = min(res, dfs(i - 1, j - 1) + dist[j]);
+        }
+
+        return res;
+    };
+
+    for (int i = 0;; ++i) {
+        if (dfs(i, n - 2) + dist[n - 1] <= (long long)speed * hoursBefore) {
+            return i;
+        }
+    }
+}
+
 int main() { return 0; }

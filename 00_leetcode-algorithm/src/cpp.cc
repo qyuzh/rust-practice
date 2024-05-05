@@ -2,6 +2,87 @@
 
 using namespace std;
 
+// Weekly Contest 396, D
+int minCostToEqualizeArray(vector<int> &nums, int cost1, int cost2) {
+    int n = nums.size();
+
+    auto mxv = *max_element(nums.begin(), nums.end()); // max value
+
+    long long total_det = 0;
+    int mxv_det = 0;
+    for (int x : nums) {
+        int det = mxv - x;
+        total_det += det;
+        mxv_det = max(mxv_det, det);
+    }
+
+    const int MOD = 1e9 + 7;
+
+    if (nums.size() <= 2 || cost1 * 2 <= cost2) {
+        return total_det * cost1 % MOD;
+    }
+
+    long long ans = 1e18;
+    for (int i = mxv, tf = 0; tf < 2; ++i) {
+        long long t = 0;
+
+        if (mxv_det > total_det - mxv_det) {
+            t = (total_det - mxv_det) * cost2;
+            long long r = mxv_det - (total_det - mxv_det);
+            t += r * cost1;
+        } else {
+            t = total_det / 2 * cost2;
+            if (total_det & 1) {
+                t += cost1;
+            }
+            tf += 1;
+        }
+
+        ans = min(ans, t);
+        total_det += n;
+        mxv_det += 1;
+    }
+
+    return ans % MOD;
+}
+
+// refer to
+// https://leetcode.cn/problems/minimum-cost-to-equalize-array/solutions/2765988/yi-bu-yi-bu-zhao-chu-ti-mu-de-zui-you-ji-cprv/
+int minCostToEqualizeArray2(vector<int> &nums, int cost1, int cost2) {
+    long long n = nums.size();
+    const int MOD = 1e9 + 7;
+
+    long long M = 0, m = 0, s = 0;
+    for (int x : nums) {
+        M = max(M, (long long)x);
+    }
+
+    for (int x : nums) {
+        m = max(m, (long long)(M - x));
+        s += M - x;
+    }
+
+    if (n <= 2ll || cost2 >= cost1 * 2) {
+        return s * cost1 % MOD;
+    }
+
+    auto calc = [&](long long m, long long s) {
+        if (m > s - m) {
+            return (s - m) * cost2 + (2ll * m - s) * cost1;
+        } else {
+            return (s / 2) * cost2 + (s % 2) * cost1;
+        }
+    };
+
+    long long ret = min(calc(m, s), calc(m + 1ll, s + n));
+    long long v = (2 * m - s) / (n - 2);
+    for (long long d = max(0ll, v - 2); d <= v + 2; ++d) {
+        ret = min(ret, calc(m + d, s + n * d));
+    }
+
+    return ret % MOD;
+}
+
 // Weekly Contest 390, C
 vector<long long> mostFrequentIDs(vector<int> &nums, vector<int> &freq) {
     // cnt[i] := the freq of i

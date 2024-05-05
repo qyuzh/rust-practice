@@ -102,3 +102,4 @@ pub mod w379;
 pub mod wc389;
 pub mod wc390;
 pub mod wc393;
+pub mod wc396;

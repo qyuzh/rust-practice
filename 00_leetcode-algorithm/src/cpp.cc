@@ -2,6 +2,81 @@
 
 using namespace std;
 
+class Solution312 {
+    vector<vector<int>> memo;
+    vector<int> val;
+
+  public:
+    int maxCoins(vector<int> &nums) {
+        int n = nums.size();
+
+        val.resize(n + 2);
+        for (int i = 0; i <= n; ++i) {
+            val[i] = nums[i - 1];
+        }
+        val[0] = val[n + 1] = 1;
+
+        memo.resize(n + 2, vector<int>(n + 2, -1));
+
+        return solve(0, n + 1);
+    }
+
+    int solve(int l, int r) {
+        if (left >= right - 1) {
+            return 0;
+        }
+
+        if (memo[l][r] != -1) {
+            return memo[l][r];
+        }
+
+        for (int i = l + 1; i < r; ++i) {
+            // the balloon in i-th position is the first balloon that was burst
+            // in [l, r]
+            int sum = val[l] * val[i] * val[r];
+
+            sum += solve(l, i) + solve(i, r);
+            memo[l][r] = max(memo[l][r], sum);
+        }
+
+        return memo[l][r];
+    }
+};
+
+vector<int> findPermutation(vector<int> &nums) {
+    int n = nums.size();
+
+    vector<int> ids;
+    ids.reserve(n);
+    for (int i = 0; i < n; ++i) {
+        ids[i] = i;
+    }
+
+    int t = INT32_MAX;
+
+    vector<int> ret;
+
+    do {
+        int score = 0;
+
+        for (int i = 0; i < n; ++i) {
+            score += abs(ids[i] - nums[ids[(i + 1) % n]]);
+        }
+
+        if (score < t) {
+            t = score;
+            ret = ids;
+        }
+
+        if (score == 0) {
+            break;
+        }
+
+    } while (std::next_permutation(ids.begin(), ids.end()));
+
+    return ret;
+}
+
 // Weekly Contest 396, D
 int minCostToEqualizeArray(vector<int> &nums, int cost1, int cost2) {
     int n = nums.size();

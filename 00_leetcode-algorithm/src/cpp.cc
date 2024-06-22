@@ -2,6 +2,30 @@
 
 using namespace std;
 
+class Solution2663 {
+  public:
+    string smallestBeautifulString(string s, int k) {
+        k += 'a';
+        const int n = s.length();
+        int i = n - 1;
+        s[i] += 1;
+        while (i < n) {
+            if (s[i] == k) {
+                if (i == 0) {
+                    return "";
+                }
+                s[i] = 'a';
+                s[--i]++;
+            } else if (i && s[i] == s[i - 1] || s[i] == s[i - 2]) {
+                s[i] += 1;
+            } else {
+                i += 1;
+            }
+        }
+        return s;
+    }
+};
+
 class Solution312 {
     vector<vector<int>> memo;
     vector<int> val;

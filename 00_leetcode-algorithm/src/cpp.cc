@@ -2,6 +2,15 @@
 
 using namespace std;
 
+class Solution520 {
+  public:
+    bool detectCapitalUse(string world) {
+        int cnt = ranges::count_if(world, [](char c) { return isupper(c); });
+        return cnt == 0 || cnt == world.length() ||
+               cnt == 1 && isupper(world[0]);
+    }
+};
+
 class Solution2663 {
   public:
     string smallestBeautifulString(string s, int k) {

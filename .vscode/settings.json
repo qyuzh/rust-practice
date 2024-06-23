@@ -1,6 +1,7 @@
 {
   "files.associations": {
     "*.css": "tailwindcss",
-    "concepts": "cpp"
+    "concepts": "cpp",
+    "ctype.h": "c"
   }
 }

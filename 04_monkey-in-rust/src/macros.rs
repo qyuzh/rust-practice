@@ -12,7 +12,7 @@ pub fn is_primitive<T: ?Sized + Any>(_s: &T) -> bool {
 #[macro_export]
 macro_rules! impl_node {
     ($($t: ty),+,) => {
-        $(impl crate::ast::Node for $t {
+        $(impl $crate::ast::Node for $t {
             fn token_literal(&self) -> &str {
                 self.token.literal.as_ref()
             }
@@ -27,7 +27,7 @@ macro_rules! impl_node {
 #[macro_export]
 macro_rules! impl_statement {
     ($($t: ty),+,) => {
-        $(impl crate::ast::Statement for $t {
+        $(impl $crate::ast::Statement for $t {
             fn statement_node(&self) {}
         })+
     };
@@ -36,7 +36,7 @@ macro_rules! impl_statement {
 #[macro_export]
 macro_rules! impl_expression {
     ($($t: ty),+,) => {
-        $(impl crate::ast::Expression for $t {
+        $(impl $crate::ast::Expression for $t {
             fn expression_node(&self) {}
         })+
     };
@@ -114,7 +114,8 @@ macro_rules! impl_display_for_struct {
                 })*
 
                 // end }
-                s.push_str(&format!("{EMPTY_STR:>w$}}} End of {}\n", stringify!($ts)));
+                s.push_str(&format!("{EMPTY_STR:>w$}}}\n"));
+                // s.push_str(&format!("{EMPTY_STR:>w$}}} End of {}\n", stringify!($ts)));
 
                 write!(f, "{s}")
             }

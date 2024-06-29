@@ -88,7 +88,7 @@ impl<'a> Parser<'a> {
 
     pub fn parse_program(&mut self) -> Program {
         let mut statements = Vec::new();
-        while self.cur_token.token_type != TokenType::EOF {
+        while self.cur_token.token_type != TokenType::Eof {
             if let Some(stmt) = self.parse_statement() {
                 statements.push(stmt);
             }
@@ -151,9 +151,7 @@ impl<'a> Parser<'a> {
 
     fn parse_expression_statement(&mut self) -> Option<Box<dyn Statement>> {
         let token = self.cur_token.clone();
-        let Some(expression) = self.parse_expression(Precedence::Lowest) else {
-            return None;
-        };
+        let expression = self.parse_expression(Precedence::Lowest)?;
         let stmt = ExpressionStatement { token, expression };
         if self.peek_token_is(TokenType::Semicolon) {
             self.next_token();
@@ -162,8 +160,6 @@ impl<'a> Parser<'a> {
     }
 
     /// `1 + 2 * 3` => `(1 + (2 * 3))`
-    ///  c p
-    ///      c p
     fn parse_expression(&mut self, precedence: Precedence) -> Option<Box<dyn Expression>> {
         if let Some(f) = self.prefix_parse_fns.get(&self.cur_token.token_type) {
             let mut left = f(self);
@@ -305,7 +301,6 @@ impl<'a> Parser<'a> {
         let mut parameters = Vec::new();
 
         if self.peek_token_is(TokenType::RParen) {
-            // fn () {}
             return parameters;
         }
 
@@ -336,7 +331,7 @@ impl<'a> Parser<'a> {
         let mut statements = Vec::new();
 
         self.next_token();
-        while self.cur_token.token_type != TokenType::EOF {
+        while self.cur_token.token_type != TokenType::Eof {
             if self.cur_token_is(TokenType::RBrace) {
                 break;
             }

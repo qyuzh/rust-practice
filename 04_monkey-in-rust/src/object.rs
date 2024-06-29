@@ -9,7 +9,6 @@ pub enum ObjectType {
 pub trait Object {
     fn inspect(&self) -> String;
     fn typ(&self) -> ObjectType;
-
     fn as_any(&self) -> &dyn Any;
 }
 
@@ -21,6 +20,7 @@ impl Object for Integer {
     fn inspect(&self) -> String {
         format!("{}", self.value)
     }
+
     fn typ(&self) -> ObjectType {
         ObjectType::Integer
     }

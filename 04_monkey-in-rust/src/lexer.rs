@@ -56,10 +56,8 @@ impl<'a> Lexer<'a> {
                 _ => tok = Token::new(TokenType::Bang, self.ch.into()),
             },
             a if is_letter(a) => {
-                // return directly, otherwise, line-63 will eat next char.
                 let ident = self.read_identifier();
                 if let Some(keyword_type) = TokenType::lookup_keyword(ident.as_str()) {
-                    // println!("{keyword_type:?} {ident}");
                     return Token::new(keyword_type, ident);
                 }
                 return Token::ident(ident);
@@ -67,7 +65,7 @@ impl<'a> Lexer<'a> {
             a if is_digit(a) => {
                 return Token::number(self.read_number());
             }
-            a if a == '\0' => {
+            '\0' => {
                 tok = Token::eof();
             }
             a => {
@@ -126,11 +124,11 @@ fn is_white_space(ch: char) -> bool {
 }
 
 fn is_letter(ch: char) -> bool {
-    'a' <= ch && ch <= 'z' || 'A' <= ch && ch <= 'Z' || ch == '_'
+    ch.is_ascii_lowercase() || ch.is_ascii_uppercase() || ch == '_'
 }
 
 fn is_digit(ch: char) -> bool {
-    '0' <= ch && ch <= '9'
+    ch.is_ascii_digit()
 }
 
 #[cfg(test)]
@@ -236,7 +234,7 @@ mod test {
             Token::new(TokenType::NEq, "!=".into()),
             Token::new(TokenType::Int, "9".into()),
             Token::new(TokenType::Semicolon, ";".into()),
-            Token::new(TokenType::EOF, "".into()),
+            Token::new(TokenType::Eof, "".into()),
         ];
 
         let mut lexer = Lexer::new(input);

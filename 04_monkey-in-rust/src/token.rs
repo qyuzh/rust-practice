@@ -3,7 +3,7 @@ use crate::impl_display_for_struct;
 #[derive(PartialEq, Debug, Clone, Eq, Hash, Copy)]
 pub enum TokenType {
     Illegal,
-    EOF,
+    Eof,
 
     // Identifiers + literals
     Ident, // add, foobar, x, y
@@ -74,7 +74,7 @@ impl Token {
     }
 
     pub fn eof() -> Token {
-        Token::new(TokenType::EOF, "".into())
+        Token::new(TokenType::Eof, "".into())
     }
 
     pub fn illegal(ch: char) -> Token {

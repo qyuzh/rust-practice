@@ -26,17 +26,17 @@ pub fn eval<T: Node + ?Sized>(node: &T) -> Box<dyn Object> {
 
     if let Some(t) = node.downcast_ref::<PrefixExpression>() {
         let right = eval(t.right.as_ref());
-        return eval_prefix_expression(&t.operator, &right);
+        return eval_prefix_expression(&t.operator, right.as_ref());
     }
 
     todo!()
 }
 
-fn eval_statements(stmts: &Vec<Box<dyn Statement>>) -> Box<dyn Object> {
+fn eval_statements(stmts: &[Box<dyn Statement>]) -> Box<dyn Object> {
     stmts.iter().fold(Box::new(Null), |_, t| eval(t.as_ref()))
 }
 
-fn eval_prefix_expression(operator: &str, right: &Box<dyn Object>) -> Box<dyn Object> {
+fn eval_prefix_expression(operator: &str, right: &dyn Object) -> Box<dyn Object> {
     match operator {
         "!" => eval_bang_operator_expression(right),
         _ => {
@@ -45,7 +45,7 @@ fn eval_prefix_expression(operator: &str, right: &Box<dyn Object>) -> Box<dyn Ob
     }
 }
 
-fn eval_bang_operator_expression(right: &Box<dyn Object>) -> Box<dyn Object> {
+fn eval_bang_operator_expression(right: &dyn Object) -> Box<dyn Object> {
     if let Some(t) = right.as_any().downcast_ref::<Null>() {
         return Box::new(Boolean { value: true });
     }
@@ -82,7 +82,7 @@ mod test {
             if let Some(t) = evaluated.as_any().downcast_ref::<Boolean>() {
                 assert_eq!(t.value, expected);
             } else {
-                assert!(false, "Expected Boolean");
+                panic!("Expected Boolean");
             }
         }
     }

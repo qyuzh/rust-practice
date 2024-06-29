@@ -1,5 +1,7 @@
 #![allow(unused)]
 
+pub use repl::lexer_starter;
+pub use repl::parser_starter;
 pub use repl::start;
 
 mod ast;

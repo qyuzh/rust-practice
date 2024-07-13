@@ -90,6 +90,7 @@ pub mod p2824;
 pub mod p2924;
 pub mod p2952;
 pub mod p299;
+pub mod p3011;
 pub mod p3040;
 pub mod p312;
 pub mod p318;

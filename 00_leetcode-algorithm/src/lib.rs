@@ -109,6 +109,7 @@ pub mod p857;
 pub mod p881;
 pub mod p901;
 pub mod p907;
+pub mod p930;
 pub mod p94;
 pub mod test;
 pub mod w379;

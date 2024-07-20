@@ -2,6 +2,43 @@
 
 using namespace std;
 
+class Solution1186 {
+  public:
+    int maximumSum(vector<int> &arr) {
+        int ans = INT_MIN, n = arr.size();
+        vector<vector<int>> memo(n + 1, vector<int>(2, INT_MIN));
+        function<int(int, int)> dfs = [&](int i, int need_delete) -> int {
+            if (i < 0) {
+                return INT_MIN >> 1;
+            }
+            auto &res = memo[i][need_delete];
+            if (res != INT_MIN) {
+                return res;
+            }
+
+            // case 1, don't delete a number
+            if (need_delete == 0) {
+                return res = max(/* select number left on i */ dfs(i - 1, 0),
+                                 /* don't select, just number-i itself */ 0) +
+                             arr[i];
+            }
+
+            // case 2, delete a number, in this case we must select numbers left
+            // on i, otherwise, we break the bound - at least one number in the
+            // final subarray
+            return res =
+                       max(dfs(i - 1, 1) // don't delete i, must delete on left
+                               + arr[i],
+                           dfs(i - 1, 0) // delete i, don't delete r on left
+                       );
+        };
+        for (int i = 0; i < n; ++i) {
+            ans = max(ans, max(dfs(i, 0), dfs(i, 1)));
+        }
+        return ans;
+    }
+};
+
 class Solution2850 {
   public:
     int minimumMoves(vector<vector<int>> &grid) {

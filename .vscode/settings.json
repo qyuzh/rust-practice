@@ -2,6 +2,7 @@
   "files.associations": {
     "*.css": "tailwindcss",
     "concepts": "cpp",
-    "ctype.h": "c"
+    "ctype.h": "c",
+    "stdbool.h": "c"
   }
 }

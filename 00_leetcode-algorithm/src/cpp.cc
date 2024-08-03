@@ -2,6 +2,60 @@
 
 using namespace std;
 
+class Solution3143V2 {
+  public:
+    int maxPointsInsideSquare(vector<vector<int>> &points, string s) {
+        int min_d[26], min2 = INT_MAX;
+        ranges::fill(min_d, INT_MAX);
+        for (int i = 0; i < points.size(); ++i) {
+            // Chebyshev distance
+            int d = max(abs(points[i][0]), abs(points[i][1]));
+            char c = s[i] - 'a';
+            if (d < min_d[c]) {
+                min2 = min(min2, min_d[c]);
+                min_d[c] = d;
+            } else {
+                min2 = min(min2, d);
+            }
+        }
+        int ans = 0;
+        for (int d : min_d) {
+            ans += d < min2;
+        }
+        return ans;
+    }
+};
+
+class Solution3143 {
+  public:
+    int maxPointsInsideSquare(vector<vector<int>> &points, string s) {
+        unsigned int vis = 0;
+        auto check = [&](int size) -> bool {
+            for (int i = 0; i < points.size(); ++i) {
+                if (abs(points[i][0]) <= size && abs(points[i][1]) <= size) {
+                    char c = s[i] - 'a';
+                    if (vis >> c & 1) {
+                        return false;
+                    }
+                    vis |= 1 << c;
+                }
+            }
+            return true;
+        };
+        int l = 0, r = 1'000'000'001; // l, r, the possible width of square
+        while (l < r) {
+            int m = (l + r + 1) >> 1;
+            if (check(m)) {
+                l = m;
+            } else {
+                r = m - 1;
+            }
+        }
+        check(l);
+        return __builtin_popcount(vis);
+    }
+};
+
 class Solution1186 {
   public:
     int maximumSum(vector<int> &arr) {

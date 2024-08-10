@@ -2,6 +2,79 @@
 
 using namespace std;
 
+class Solution2940 {
+    vector<int> mx;
+
+    /**
+     * @brief
+     *
+     * @param o `mx[o]`, the max value of [l, r] for `heights`
+     * @param l
+     * @param r
+     * @param heights
+     */
+    void build(int o, int l, int r, vector<int> &heights) {
+        if (l == r) {
+            mx[o] = heights[l];
+            return;
+        }
+        int m = (l + r) >> 1;
+        build(o * 2, l, m, heights);
+        build(o * 2 + 1, m + 1, r, heights);
+        mx[o] = max(mx[o * 2], mx[o * 2 + 1]);
+    }
+
+    /**
+     * @brief find the index of the first value greater than `v` in `[L, n-1]`
+     *
+     * @param o
+     * @param l
+     * @param r
+     * @param L
+     * @param v
+     * @return the index if exists, otherwise `-1`
+     */
+    int query(int o, int l, int r, int L, int v) {
+        if (mx[o] <= v) return -1;
+        if (l == r) return l;
+        int m = (l + r) >> 1;
+        if (L <= m) {
+            int p = query(o * 2, l, m, L, v);
+            if (p >= 0) return p;
+        }
+        return query(o * 2 + 1, m + 1, r, L, v);
+    }
+
+  public:
+    vector<int> leftmostBuildingQueries(vector<int> &heights,
+                                        vector<vector<int>> &queries) {
+        int n = heights.size();
+
+        // 1 + 2 + 4 + 2 ^ (logn + 1)
+        // = 2 ^ (logn + 2) - 1
+        // < 4 * 2 ^ logn
+        // = 4 << logn
+        //
+        // __lg, calculate the base-2 logarithm of an integer
+        mx.resize(4 << __lg(n));
+
+        build(1, 0, n - 1, heights);
+
+        vector<int> ans;
+        for (auto &q : queries) {
+            int a = q[0], b = q[1];
+            if (a > b) swap(a, b); // let a <= b for convience
+            if (a == b || heights[a] < heights[b]) {
+                ans.push_back(b);
+            } else {
+                ans.push_back(query(1, 0, n - 1, b + 1, heights[a]));
+            }
+        }
+
+        return ans;
+    }
+};
+
 class Solution3143V2 {
   public:
     int maxPointsInsideSquare(vector<vector<int>> &points, string s) {

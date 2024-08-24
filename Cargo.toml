@@ -4,7 +4,8 @@ members = [
     "03_rust-lang-learning",
     "02_mini-async-runtime-unix",
     "01_mini-redis",
-    "00_leetcode-algorithm"
+    "00_leetcode-algorithm",
+    "05_my-thread-pool",
 ]
 resolver = "2"
 

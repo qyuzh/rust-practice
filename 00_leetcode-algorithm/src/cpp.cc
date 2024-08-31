@@ -2,6 +2,42 @@
 
 using namespace std;
 
+class Solution698 {
+  public:
+    bool canPartitionKSubsets(vector<int> &nums, int k) {
+        int sum = accumulate(nums.begin(), nums.end(), 0);
+
+        if (sum % k > 0) return false;
+
+        sort(nums.begin(), nums.end());
+        int avg = sum / k;
+
+        if (nums.back() > avg) return false;
+
+        int n = nums.size();
+        vector<bool> visited(1 << n, false);
+        /**
+         * s, set of left numbers
+         * p, (avg - p) is the number sum to next avg
+         */
+        function<bool(int, int)> dfs = [&](int s, int p) -> bool {
+            if (s == 0) return true;
+            if (visited[s]) return false;
+            visited[s] = true;
+            for (int i = 0; i < n; ++i) {
+                if (nums[i] + p > avg) break;
+                if ((s >> i) & 1) {
+                    if (dfs(s ^ (1 << i), (p + nums[i]) % avg)) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        };
+        return dfs((1 << n) - 1, 0);
+    }
+};
+
 class Solution2940 {
     vector<int> mx;
 

@@ -111,6 +111,7 @@ pub mod p520;
 pub mod p53;
 pub mod p572;
 pub mod p689;
+pub mod p698;
 pub mod p699;
 pub mod p715;
 pub mod p807;

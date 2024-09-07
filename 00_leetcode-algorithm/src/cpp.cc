@@ -2,6 +2,51 @@
 
 using namespace std;
 
+class Solution3177 {
+  public:
+    /**
+     * @brief runs in O(nk)/O(nk)
+     *
+     * @param nums
+     * @param k
+     * @return int
+     */
+    int maximumLength(vector<int> &nums, int k) {
+        // <last_number, at-most-i-not-equal>
+        unordered_map<int, vector<int>> fs;
+        // j, at most j not equal, 0 <= j < k + 1
+        // p=0, max{f[y][k]|0<=y_index<i}
+        // p=1, max{f[y][k]|0<=y_index<i and y!=x}
+        // p=2, x
+        vector<array<int, 3>> records(k + 1);
+        for (int x : nums) {
+            auto &f = fs[x];
+            f.resize(k + 1);
+            for (int j = k; j >= 0; j--) {
+                ++f[j];
+                if (j > 0) {
+                    auto &r = records[j - 1];
+                    int mx = r[0], mx2 = r[1], y = r[2];
+                    f[j] = max(f[j], (x != y ? mx : mx2) + 1);
+                }
+
+                int v = f[j];
+                auto &p = records[j];
+                if (v > p[0]) {
+                    if (x != p[2]) {
+                        p[2] = x;
+                        p[1] = p[0];
+                    }
+                    p[0] = v;
+                } else if (x != p[2] && v > p[1]) {
+                    p[1] = v;
+                }
+            }
+        }
+        return records[k][0];
+    }
+};
+
 class Solution698 {
   public:
     bool canPartitionKSubsets(vector<int> &nums, int k) {

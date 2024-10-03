@@ -2,6 +2,43 @@
 
 using namespace std;
 
+class Solution1928 {
+    static constexpr int INF = INT_MAX / 2;
+
+  public:
+    /**
+     * @brief
+     *
+     * f[t][i] represents the min-sum-fees to reach i-th city using exact
+     * t-minutes
+     *
+     * @param maxTime
+     * @param edges
+     * @param passingFees
+     * @return int
+     */
+    int minCost(int maxTime, vector<vector<int>> &edges,
+                vector<int> &passingFees) {
+        int n = passingFees.size();
+        vector<vector<int>> f(maxTime + 1, vector<int>(n, INF));
+        f[0][0] = passingFees[0];
+        for (int t = 1; t <= maxTime; ++t) {
+            for (const auto &edge : edges) {
+                int i = edge[0], j = edge[1], cost = edge[2];
+                if (cost <= t) {
+                    f[t][i] = min(f[t][i], f[t - cost][j] + passingFees[i]);
+                    f[t][j] = min(f[t][j], f[t - cost][i] + passingFees[j]);
+                }
+            }
+        }
+        int ans = INF;
+        for (int t = 1; t <= maxTime; ++t) {
+            ans = min(ans, f[t][n - 1]);
+        }
+        return ans == INF ? -1 : ans;
+    }
+};
+
 class Solution3177 {
   public:
     /**

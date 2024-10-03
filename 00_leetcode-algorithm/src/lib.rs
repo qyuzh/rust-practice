@@ -47,6 +47,7 @@ pub mod p187;
 pub mod p1870;
 pub mod p1883;
 pub mod p1904;
+pub mod p1928;
 pub mod p1958;
 pub mod p2003;
 pub mod p2008;

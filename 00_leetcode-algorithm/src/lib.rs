@@ -130,6 +130,7 @@ pub mod p699;
 pub mod p715;
 pub mod p807;
 pub mod p815;
+pub mod p825;
 pub mod p828;
 pub mod p857;
 pub mod p881;

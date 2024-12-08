@@ -11,7 +11,7 @@ pub fn punishment_number(n: i32) -> i32 {
 /// num = 26
 /// num*num = 1296 tat 1 + 29 + 6
 fn can_partition(str: &str, num: i32) -> bool {
-    if str.len() == 0 {
+    if str.is_empty() {
         return num == 0;
     }
     if num < 0 {

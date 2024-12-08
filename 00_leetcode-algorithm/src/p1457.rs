@@ -17,7 +17,7 @@ fn dfs(node: &Option<Rc<RefCell<TreeNode>>>, feature: &mut [usize], depth: usize
     let v = node.val;
     feature[v as usize] += 1;
 
-    let cnt = if node.left == None && node.right == None {
+    let cnt = if node.left.is_none() && node.right.is_none() {
         let mut odd_cnt = 0;
         for &x in feature.iter() {
             odd_cnt += x % 2;
@@ -28,16 +28,13 @@ fn dfs(node: &Option<Rc<RefCell<TreeNode>>>, feature: &mut [usize], depth: usize
             } else {
                 0
             }
+        } else if odd_cnt == 0 {
+            1
         } else {
-            if odd_cnt == 0 {
-                1
-            } else {
-                0
-            }
+            0
         }
     } else {
-        let cnt = dfs(&node.left, feature, depth + 1) + dfs(&node.right, feature, depth + 1);
-        cnt
+        dfs(&node.left, feature, depth + 1) + dfs(&node.right, feature, depth + 1)
     };
 
     feature[v as usize] -= 1;

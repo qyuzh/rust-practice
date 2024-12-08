@@ -10,7 +10,7 @@ pub fn combination_sum3(k: i32, n: i32) -> Vec<Vec<i32>> {
         for i in (0..SHIFT) {
             if mask >> i & 1 == 1 {
                 sum += (i + 1);
-                res.push((i + 1));
+                res.push(i + 1);
             }
         }
         if sum == n {

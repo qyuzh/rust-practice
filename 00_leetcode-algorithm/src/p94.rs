@@ -9,12 +9,9 @@ pub fn inorder_traversal(root: Option<Rc<RefCell<TreeNode>>>) -> Vec<i32> {
 }
 
 fn inorder(root: &Option<Rc<RefCell<TreeNode>>>, seq: &mut Vec<i32>) {
-    match root {
-        Some(node) => {
-            inorder(&node.borrow().left, seq);
-            seq.push(node.borrow().val);
-            inorder(&node.borrow().right, seq);
-        }
-        None => {}
+    if let Some(node) = root {
+        inorder(&node.borrow().left, seq);
+        seq.push(node.borrow().val);
+        inorder(&node.borrow().right, seq);
     }
 }

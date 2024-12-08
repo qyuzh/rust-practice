@@ -1,12 +1,12 @@
 /// find the width of columns of a grid
 pub fn find_column_width(grid: Vec<Vec<i32>>) -> Vec<i32> {
-    assert!(grid.len() >= 1, "grid's len can not be 0");
+    assert!(grid.is_empty(), "grid's len can not be 0");
 
     let mut ret = vec![0; grid[0].len()];
 
-    for j in (0..grid[0].len()) {
-        for i in (0..grid.len()) {
-            ret[j] = ret[j].max(find_len(grid[i][j]));
+    for (j, ret_elem) in ret.iter_mut().enumerate() {
+        for row in &grid {
+            *ret_elem = (*ret_elem).max(find_len(row[j]));
         }
     }
 

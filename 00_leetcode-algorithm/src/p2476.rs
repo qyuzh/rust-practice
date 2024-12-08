@@ -16,15 +16,19 @@ pub fn closest_nodes(root: Option<Rc<RefCell<TreeNode>>>, queries: Vec<i32>) -> 
 fn dfs(node: &Option<Rc<RefCell<TreeNode>>>, query: i32, ans: &mut [i32; 2]) {
     if let Some(node) = node {
         let val = node.borrow().val;
-        if val == query {
-            ans[0] = val;
-            ans[1] = val;
-        } else if val < query {
-            ans[0] = val;
-            dfs(&node.borrow().right, query, ans);
-        } else {
-            ans[1] = val;
-            dfs(&node.borrow().left, query, ans);
+        match val.cmp(&query) {
+            std::cmp::Ordering::Equal => {
+                ans[0] = val;
+                ans[1] = val;
+            }
+            std::cmp::Ordering::Less => {
+                ans[0] = val;
+                dfs(&node.borrow().right, query, ans);
+            }
+            std::cmp::Ordering::Greater => {
+                ans[1] = val;
+                dfs(&node.borrow().left, query, ans);
+            }
         }
     }
 }

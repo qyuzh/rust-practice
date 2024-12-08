@@ -8,8 +8,8 @@ pub fn maximum_length_substring(s: String) -> i32 {
                 cnts[(bytes[k] - b'a') as usize] += 1;
             }
             let mut valid = true;
-            for k in 0..26 {
-                if cnts[k] > 2 {
+            for &count in &cnts {
+                if count > 2 {
                     valid = false;
                     break;
                 }

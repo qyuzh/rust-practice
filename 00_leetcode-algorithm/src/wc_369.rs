@@ -46,12 +46,10 @@ pub fn min_sum(nums1: Vec<i32>, nums2: Vec<i32>) -> i64 {
         } else {
             -1
         }
+    } else if has_zero2 {
+        sum1
     } else {
-        if has_zero2 {
-            sum1
-        } else {
-            -1
-        }
+        -1
     }
 }
 
@@ -83,8 +81,8 @@ pub fn maximum_points(edges: Vec<Vec<i32>>, coins: Vec<i32>, k: i32) -> i32 {
         g[e[1] as usize].push(e[0] as usize);
     }
     let mut f = vec![vec![i32::MIN; MAX_BITS]; coins.len()];
-    let ans = dfs(&coins, &g, &mut f, 0, 0, k, 0);
-    ans
+
+    dfs(&coins, &g, &mut f, 0, 0, k, 0)
 }
 
 fn dfs(

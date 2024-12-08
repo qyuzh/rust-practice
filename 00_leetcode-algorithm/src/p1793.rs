@@ -20,7 +20,7 @@ pub fn maximum_score(nums: Vec<i32>, k: i32) -> i32 {
 }
 
 /// runs in O(n)/O(1)
-fn find_boundary(nums: &Vec<i32>, idx: usize) -> (usize, usize) {
+fn find_boundary(nums: &[i32], idx: usize) -> (usize, usize) {
     let mut l = idx;
     while l > 0 && nums[l] >= nums[idx] {
         l -= 1;
@@ -57,7 +57,7 @@ pub fn maximum_score2(nums: Vec<i32>, k: i32) -> i32 {
 }
 
 /// runs in O(n)/O(n), in which n = nums.len()
-fn find_boundarys<'a, T>(nums: &Vec<i32>, iter: T, default: i32) -> Vec<i32>
+fn find_boundarys<'a, T>(nums: &[i32], iter: T, default: i32) -> Vec<i32>
 where
     T: Iterator<Item = (usize, &'a i32)>,
 {

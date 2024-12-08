@@ -5,10 +5,10 @@ pub fn minimum_moves(grid: Vec<Vec<i32>>) -> i32 {
 
     // get_min_distance
     let mut ht = std::collections::HashMap::<(usize, usize), i32>::new();
-    for i in 0..m {
-        for j in 0..n {
-            if grid[i][j] > 1 {
-                ht.insert((i, j), grid[i][j] - 1);
+    for (i, row) in grid.iter().enumerate() {
+        for (j, &val) in row.iter().enumerate() {
+            if val > 1 {
+                ht.insert((i, j), val - 1);
             }
         }
     }
@@ -33,9 +33,9 @@ pub fn minimum_moves(grid: Vec<Vec<i32>>) -> i32 {
     };
 
     let mut ans = 0;
-    for i in 0..m {
-        for j in 0..n {
-            if grid[i][j] == 0 {
+    for (i, row) in grid.iter().enumerate() {
+        for (j, &val) in row.iter().enumerate() {
+            if val == 0 {
                 let t = get_min_distance(i, j);
                 ans += t;
             }

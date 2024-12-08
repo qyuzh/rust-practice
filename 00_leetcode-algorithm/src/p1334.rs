@@ -1,4 +1,3 @@
-///
 pub fn find_the_city(n: i32, edges: Vec<Vec<i32>>, distance_threshold: i32) -> i32 {
     let n = n as usize;
     let mut g = vec![vec![i32::MAX >> 3; n]; n];
@@ -18,7 +17,7 @@ pub fn find_the_city(n: i32, edges: Vec<Vec<i32>>, distance_threshold: i32) -> i
     ans as i32
 }
 
-fn dfs(node: usize, g: &Vec<Vec<i32>>, n: usize, th: i32) -> usize {
+fn dfs(node: usize, g: &[Vec<i32>], n: usize, th: i32) -> usize {
     let mut vis = vec![false; n];
     let mut dis = vec![i32::MAX >> 3; n];
     dis[node] = 0;

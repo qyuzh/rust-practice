@@ -108,11 +108,11 @@ pub fn minimum_moves(nums: Vec<i32>, k: i32, max_changes: i32) -> i64 {
     let mut ans = i64::MAX;
     let size = (k - max_changes) as usize;
     for r in size..=n {
-        let l = r - size as usize;
+        let l = r - size;
 
         let i = l + size / 2;
 
-        let idx = pos[i] as usize;
+        let idx = pos[i];
 
         let s1 = (idx * (i - l)) as i64 - (sum[i] - sum[l]);
         let s2 = sum[r] - sum[i] - (idx * (r - i)) as i64;

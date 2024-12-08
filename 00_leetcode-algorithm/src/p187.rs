@@ -7,11 +7,8 @@ pub fn find_repeated_dna_sequences(s: String) -> Vec<String> {
     let mut ht = std::collections::HashMap::new();
     for i in 0..=chars.len() - 10 {
         let s = &chars[i..i + 10];
-        match ht.get(s) {
-            Some(&t) if t == 1 => {
-                ans.push(unsafe { String::from_utf8_unchecked(s.to_vec()) });
-            }
-            _ => {}
+        if let Some(&1) = ht.get(s) {
+            ans.push(unsafe { String::from_utf8_unchecked(s.to_vec()) });
         }
         ht.entry(s).and_modify(|v| *v += 1).or_insert(1);
     }

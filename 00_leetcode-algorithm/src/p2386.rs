@@ -52,7 +52,7 @@ pub fn k_sum2(mut nums: Vec<i32>, k: i32) -> i64 {
 
 /// Run in O(nlogn + klogk)/O(k)
 fn k_smallest_seq_sum2(mut nums: Vec<i32>, mut k: i32) -> i64 {
-    if nums.len() == 0 || k == 1 {
+    if nums.is_empty() || k == 1 {
         return 0;
     }
 
@@ -120,7 +120,7 @@ fn dfs(i: usize, s: i64, nums: &Vec<i32>, cnt: &mut i32) {
 }
 
 #[inline]
-fn abs(nums: &mut Vec<i32>) {
+fn abs(nums: &mut [i32]) {
     for x in nums.iter_mut() {
         if *x < 0 {
             *x = -*x;
@@ -129,7 +129,7 @@ fn abs(nums: &mut Vec<i32>) {
 }
 
 #[inline]
-fn sum_of_positive(nums: &Vec<i32>) -> i64 {
+fn sum_of_positive(nums: &[i32]) -> i64 {
     let mut sum = 0;
     for &x in nums.iter() {
         if x > 0 {

@@ -52,9 +52,7 @@ pub fn lexicographically_smallest_array(nums: Vec<i32>, limit: i32) -> Vec<i32> 
         }
 
         let mut ids = vec![0; j - i];
-        for k in i..j {
-            ids[k - i] = p[k];
-        }
+        ids.copy_from_slice(&p[i..j]);
         ids.sort();
 
         for k in i..j {

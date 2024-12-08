@@ -71,18 +71,18 @@ impl Trie {
         for _ in (0..32).rev() {
             unsafe {
                 if (n & (1 << 31)) == (1 << 31) {
-                    if (*node).left == ptr::null_mut() {
+                    if (*node).left.is_null() {
                         (*node).left = Box::into_raw(Box::new(TrieNode::new()));
                     }
                     node = (*node).left;
                 } else {
-                    if (*node).right == ptr::null_mut() {
+                    if (*node).right.is_null() {
                         (*node).right = Box::into_raw(Box::new(TrieNode::new()));
                     }
                     node = (*node).right;
                 }
             }
-            n = n << 1;
+            n <<= 1;
             if n == 0 {
                 break;
             }
@@ -102,25 +102,23 @@ impl Trie {
         for i in (0..32).rev() {
             unsafe {
                 if (n & (1 << 31)) == (1 << 31) {
-                    if (*node).right != ptr::null_mut() {
+                    if !(*node).right.is_null() {
                         node = (*node).right;
-                    } else if (*node).left != ptr::null_mut() {
+                    } else if !(*node).left.is_null() {
                         node = (*node).left;
                         c |= 1 << i;
                     } else {
                         break;
                     }
+                } else if !(*node).left.is_null() {
+                    node = (*node).left;
+                    c |= 1 << i;
+                } else if !(*node).right.is_null() {
+                    node = (*node).right;
                 } else {
-                    if (*node).left != ptr::null_mut() {
-                        node = (*node).left;
-                        c |= 1 << i;
-                    } else if (*node).right != ptr::null_mut() {
-                        node = (*node).right;
-                    } else {
-                        break;
-                    }
+                    break;
                 }
-                n = n << 1;
+                n <<= 1;
                 if (*node).end {
                     ans = ans.max(c ^ tn);
                 }
@@ -129,13 +127,13 @@ impl Trie {
         ans
     }
 
-    fn drop(&mut self, node: *mut TrieNode) {
-        if node == ptr::null_mut() {
+    fn drop(node: *mut TrieNode) {
+        if node.is_null() {
             return;
         }
         unsafe {
-            self.drop((*node).right);
-            self.drop((*node).left);
+            Self::drop((*node).right);
+            Self::drop((*node).left);
         }
         let _ = unsafe { Box::from_raw(node) };
     }
@@ -143,7 +141,7 @@ impl Trie {
 
 impl Drop for Trie {
     fn drop(&mut self) {
-        self.drop(self.head);
+        Self::drop(self.head);
     }
 }
 

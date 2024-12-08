@@ -54,7 +54,7 @@ impl Node {
         // 3. l < r < mid -> left
         let mid = (pl + pr) >> 1;
         if l < mid {
-            if self.l == None {
+            if self.l.is_none() {
                 self.l = Some(Box::new(Node {
                     l: None,
                     r: None,
@@ -64,7 +64,7 @@ impl Node {
             self.l.as_mut().unwrap().add_range(l, mid.min(r), pl, mid);
         }
         if mid < r {
-            if self.r == None {
+            if self.r.is_none() {
                 self.r = Some(Box::new(Node {
                     l: None,
                     r: None,
@@ -76,7 +76,7 @@ impl Node {
     }
 
     fn query_range(&self, l: i32, r: i32, pl: i32, pr: i32) -> bool {
-        if self.tracked == true {
+        if self.tracked {
             return true;
         }
         if l <= pl && pr <= r {
@@ -139,22 +139,22 @@ mod test {
         let mut obj = RangeModule::new();
         obj.add_range(10, 20);
         obj.remove_range(14, 16);
-        assert_eq!(obj.query_range(10, 14), true, "eq 1");
-        assert_eq!(obj.query_range(13, 15), false, "eq 2");
-        assert_eq!(obj.query_range(16, 17), true, "eq 3");
+        assert!(obj.query_range(10, 14), "eq 1");
+        assert!(!obj.query_range(13, 15), "eq 2");
+        assert!(obj.query_range(16, 17), "eq 3");
     }
 
     #[test]
     fn test2() {
         let mut obj = RangeModule::new();
         obj.add_range(5, 7);
-        assert_eq!(obj.query_range(2, 7), false, "eq 1");
+        assert!(!obj.query_range(2, 7), "eq 1");
         obj.add_range(6, 9);
-        assert_eq!(obj.query_range(2, 9), false, "eq 2");
+        assert!(!obj.query_range(2, 9), "eq 2");
         obj.add_range(2, 7);
         obj.remove_range(3, 10);
         obj.remove_range(1, 8);
         obj.remove_range(1, 10);
-        assert_eq!(obj.query_range(4, 7), false, "eq 3");
+        assert!(!obj.query_range(4, 7), "eq 3");
     }
 }

@@ -7,7 +7,7 @@ pub fn is_valid_serialization(preorder: String) -> bool {
     preorder_traverse(&mut nodes) && nodes.next().is_none()
 }
 
-fn preorder_traverse<'a>(nodes: &mut Split<'a, &str>) -> bool {
+fn preorder_traverse(nodes: &mut Split<'_, &str>) -> bool {
     if let Some(s) = nodes.next() {
         if s == "#" {
             return true;
@@ -100,11 +100,11 @@ pub fn is_valid_serialization3(preorder: String) -> bool {
 #[test]
 fn test_is_valid_serialization() {
     let ret = is_valid_serialization("9,3,4,#,#,1,#,#,2,#,6,#,#".into());
-    assert_eq!(ret, true);
+    assert!(ret);
 
     let ret = is_valid_serialization("1,#".into());
-    assert_eq!(ret, false);
+    assert!(!ret);
 
     let ret = is_valid_serialization("9,#,#,1".into());
-    assert_eq!(ret, false);
+    assert!(!ret);
 }

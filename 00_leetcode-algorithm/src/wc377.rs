@@ -23,7 +23,7 @@ pub fn maximize_square_area(m: i32, n: i32, h_fences: Vec<i32>, v_fences: Vec<i3
 
     let t1 = helper(h_fences, m as usize);
     let t2 = helper(v_fences, n as usize);
-    let p = t1.intersection(&t2).into_iter().max();
+    let p = t1.intersection(&t2).max();
 
     if let Some(&p) = p {
         (p * p % MOD) as i32
@@ -62,8 +62,8 @@ pub fn minimum_cost(
     const INF: usize = usize::MAX >> 2;
 
     let mut dist = vec![vec![INF; 26]; 26];
-    for i in 0..26 {
-        dist[i][i] = 0;
+    for (i, r) in dist.iter_mut().enumerate() {
+        r[i] = 0;
     }
     for ((&c1, &c2), &c) in original.iter().zip(changed.iter()).zip(cost.iter()) {
         let (i, j) = (c1 as usize - 'a' as usize, c2 as usize - 'a' as usize);

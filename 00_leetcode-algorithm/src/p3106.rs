@@ -18,8 +18,8 @@ pub fn get_smallest_string(s: String, k: i32) -> String {
 
 fn distance_char(a: u8, b: u8) -> u8 {
     if a >= b {
-        return (a - b).min(26 - a + b);
+        (a - b).min(26 - a + b)
     } else {
-        return distance_char(b, a);
+        distance_char(b, a)
     }
 }

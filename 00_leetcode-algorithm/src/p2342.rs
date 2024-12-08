@@ -1,4 +1,3 @@
-///
 pub fn maximum_sum(nums: Vec<i32>) -> i32 {
     let mut ans = 0;
     let mut ht = std::collections::HashMap::new();

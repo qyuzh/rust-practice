@@ -7,15 +7,14 @@ pub fn max_increase_keeping_skyline(grid: Vec<Vec<i32>>) -> i32 {
     for (i, r) in grid.iter().enumerate() {
         max_rows[i] = *r.iter().max().unwrap();
     }
-    for i in 0..n {
-        for j in 0..m {
-            max_cols[i] = max_cols[i].max(grid[j][i]);
+    for (i, max_col) in max_cols.iter_mut().enumerate() {
+        for row in &grid {
+            *max_col = (*max_col).max(row[i]);
         }
     }
     let mut ans = 0;
-    for i in 0..m {
-        for j in 0..n {
-            let x = grid[i][j];
+    for (i, row) in grid.iter().enumerate() {
+        for (j, &x) in row.iter().enumerate() {
             ans += max_rows[i].min(max_cols[j]) - x;
         }
     }

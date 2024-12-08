@@ -6,6 +6,12 @@ pub struct StockSpanner {
     idx: usize,
 }
 
+impl Default for StockSpanner {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl StockSpanner {
     pub fn new() -> Self {
         let mono_stack = vec![(i32::MAX, 0)];

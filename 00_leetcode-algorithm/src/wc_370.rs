@@ -52,7 +52,6 @@ fn dfs(g: &Vec<Vec<usize>>, values: &Vec<i32>, node: usize, fa: usize) -> i64 {
     ans
 }
 
-///
 pub fn max_balanced_subsequence_sum(nums: Vec<i32>) -> i64 {
     let mut b = nums
         .iter()
@@ -62,11 +61,11 @@ pub fn max_balanced_subsequence_sum(nums: Vec<i32>) -> i64 {
     b.sort();
     b.dedup();
 
-    let mut bit = BIT::new(nums.len() + 1);
+    let mut bit = Bit::new(nums.len() + 1);
     let mut ans = i64::MIN;
-    for i in 0..nums.len() {
-        let j = b.partition_point(|&v| v < (nums[i] - i as i32)) + 1;
-        let f = 0.max(bit.pre_max(j as i32)) + nums[i] as i64;
+    for (i, &num) in nums.iter().enumerate() {
+        let j = b.partition_point(|&v| v < (num - i as i32)) + 1;
+        let f = 0.max(bit.pre_max(j as i32)) + num as i64;
         ans = ans.max(f);
         bit.update(j as i32, f);
     }
@@ -74,13 +73,13 @@ pub fn max_balanced_subsequence_sum(nums: Vec<i32>) -> i64 {
     ans
 }
 
-struct BIT {
+struct Bit {
     tree: Vec<i64>,
 }
 
-impl BIT {
-    pub fn new(n: usize) -> BIT {
-        BIT { tree: vec![0; n] }
+impl Bit {
+    pub fn new(n: usize) -> Bit {
+        Bit { tree: vec![0; n] }
     }
 
     pub fn update(&mut self, mut i: i32, val: i64) {

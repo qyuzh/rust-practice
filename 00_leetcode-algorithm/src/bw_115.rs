@@ -1,4 +1,3 @@
-///
 pub fn last_visited_integers(words: Vec<String>) -> Vec<i32> {
     let mut k = 0;
     let mut nums = vec![];
@@ -19,7 +18,6 @@ pub fn last_visited_integers(words: Vec<String>) -> Vec<i32> {
     ans
 }
 
-///
 pub fn get_words_in_longest_subsequence(
     _n: i32,
     words: Vec<String>,
@@ -64,7 +62,7 @@ pub fn count_sub_multisets(nums: Vec<i32>, l: i32, r: i32) -> i32 {
     ans
 }
 
-fn helper_d(nums: &Vec<i32>, val: i32) -> i32 {
+fn helper_d(nums: &[i32], val: i32) -> i32 {
     let mut cnt = 0;
     let mut sum = 0;
     let mut i = 0;

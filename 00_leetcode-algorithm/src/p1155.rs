@@ -3,9 +3,10 @@
 pub fn num_rolls_to_target(n: i32, k: i32, target: i32) -> i32 {
     let mut f = vec![0; target as usize + 1];
     // 1. init f, after this, f = 0 1 1 ... 1(k times) 0 0
-    for t in 1..k.min(target) as usize + 1 {
-        f[t] = 1;
-    }
+    f.iter_mut()
+        .take(k.min(target) as usize + 1)
+        .skip(1)
+        .for_each(|x| *x = 1);
     // 2. iter n - 1 times
     for i in 1..n as usize {
         for t in (i + 1..target as usize + 1).rev() {
@@ -17,9 +18,7 @@ pub fn num_rolls_to_target(n: i32, k: i32, target: i32) -> i32 {
             }
         }
         // set f[0..i] = 0
-        for t in 0..i + 1 {
-            f[t] = 0;
-        }
+        f[0..i + 1].fill(0);
     }
     f[target as usize]
 }

@@ -6,8 +6,8 @@ pub fn sum_counts(nums: Vec<i32>) -> i32 {
     for i in 0..n {
         for j in i..n {
             let mut hs = std::collections::HashSet::new();
-            for k in i..j + 1 {
-                hs.insert(nums[k]);
+            for &num in &nums[i..=j] {
+                hs.insert(num);
             }
             ans += (hs.len() * hs.len()) as i32;
         }
@@ -21,8 +21,8 @@ pub fn sum_counts_v2(nums: Vec<i32>) -> i32 {
     let mut ans = 0;
     for i in 0..n {
         let mut hs = std::collections::HashSet::new();
-        for j in i..n {
-            hs.insert(nums[j]);
+        for &num in &nums[i..] {
+            hs.insert(num);
             ans += (hs.len() * hs.len()) as i32;
         }
     }

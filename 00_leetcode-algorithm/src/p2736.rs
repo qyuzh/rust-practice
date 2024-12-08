@@ -20,7 +20,7 @@ pub fn maximum_sum_queries_bf(
 }
 
 pub fn maximum_sum_queries(nums1: Vec<i32>, nums2: Vec<i32>, queries: Vec<Vec<i32>>) -> Vec<i32> {
-    let mut a: Vec<(i32, i32)> = nums1.into_iter().zip(nums2.into_iter()).collect();
+    let mut a: Vec<(i32, i32)> = nums1.into_iter().zip(nums2).collect();
     a.sort_by(|x, y| y.0.cmp(&x.0)); // 按照nums1, 大到小
 
     let mut qid: Vec<usize> = (0..queries.len()).collect();

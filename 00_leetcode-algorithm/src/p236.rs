@@ -19,7 +19,7 @@ pub fn lowest_common_ancestor(
     for d in p_descendants.iter().rev() {
         // search
         for d2 in q_descendants.iter().rev() {
-            if Rc::ptr_eq(&d, &d2) {
+            if Rc::ptr_eq(d, d2) {
                 return Some(d.clone());
             }
         }
@@ -35,7 +35,7 @@ fn get_descendants(root: &Option<Node>, p: &Node, descendants: &mut Vec<Node>) -
         Some(node) => {
             if Rc::ptr_eq(node, p) {
                 descendants.push(node.clone()); // fix: self is also descdendant
-                return true;
+                true
             } else {
                 descendants.push(node.clone());
                 let left_founded = get_descendants(&node.borrow().left, p, descendants);
@@ -43,7 +43,7 @@ fn get_descendants(root: &Option<Node>, p: &Node, descendants: &mut Vec<Node>) -
                 if !left_founded && !right_founded {
                     descendants.pop();
                 }
-                return left_founded || right_founded;
+                left_founded || right_founded
             }
         }
         None => false,

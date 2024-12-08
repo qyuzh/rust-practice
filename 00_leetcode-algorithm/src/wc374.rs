@@ -62,8 +62,8 @@ fn helper_c(word: &[u8], k: i32, cnt: i32) -> i32 {
         ht[i] += 1;
         if r - l + 1 == size {
             let mut flag = true;
-            for i in 0..26 {
-                if ht[i] > 0 && ht[i] != k {
+            for &count in &ht {
+                if count > 0 && count != k {
                     flag = false;
                     break;
                 }

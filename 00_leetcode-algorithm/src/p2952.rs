@@ -14,7 +14,7 @@ pub fn minimum_added_coins(mut coins: Vec<i32>, target: i32) -> i32 {
             ob += coins[i];
             i += 1;
         } else {
-            ob += ob + 1;
+            ob = ob + ob + 1;
             ans += 1;
         }
     }
@@ -25,7 +25,7 @@ pub fn minimum_added_coins(mut coins: Vec<i32>, target: i32) -> i32 {
 
     // Could be optimized to O(1)
     while ob < target {
-        ob += ob + 1;
+        ob = ob + ob + 1;
         ans += 1;
     }
 

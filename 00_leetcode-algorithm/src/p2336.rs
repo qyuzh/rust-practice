@@ -3,6 +3,12 @@ pub struct SmallestInfiniteSet {
     min: i32,
 }
 
+impl Default for SmallestInfiniteSet {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl SmallestInfiniteSet {
     pub fn new() -> Self {
         Self {

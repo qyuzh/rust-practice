@@ -1,6 +1,6 @@
 /// # Lemmas
 /// 1. After topological sort, the remaining must be circles of size of either 2 or more.
-/// Every circle must be of single hole.
+///    Every circle must be of single hole.
 ///
 /// # Complexity
 /// Get answer in O(n)/O(n)
@@ -35,7 +35,7 @@ pub fn maximum_invitations(favorite: Vec<i32>) -> i32 {
     len.max(len2) as i32
 }
 
-fn topological_sort(g: &Vec<Vec<usize>>, indegs: &mut Vec<i32>) -> Vec<bool> {
+fn topological_sort(g: &[Vec<usize>], indegs: &mut [i32]) -> Vec<bool> {
     let mut removed = vec![false; indegs.len()];
     let mut q = std::collections::VecDeque::new();
     for (i, &x) in indegs.iter().enumerate() {
@@ -63,8 +63,8 @@ fn topological_sort(g: &Vec<Vec<usize>>, indegs: &mut Vec<i32>) -> Vec<bool> {
 /// # Params
 /// - *reset*, true for resetting `vis[node]` to `false`, otherwise set it to `true`.
 fn get_circle_size(
-    g: &Vec<Vec<usize>>,
-    removed: &Vec<bool>,
+    g: &[Vec<usize>],
+    removed: &[bool],
     vis: &mut Vec<bool>,
     node: usize,
     reset: bool,
@@ -83,8 +83,8 @@ fn get_circle_size(
 }
 
 fn get_size_for_circle_size_of_2(
-    g: &Vec<Vec<usize>>,
-    removed: &Vec<bool>,
+    g: &[Vec<usize>],
+    removed: &[bool],
     vis: &mut Vec<bool>,
     node: usize,
 ) -> usize {
@@ -94,10 +94,10 @@ fn get_size_for_circle_size_of_2(
             another = nxt;
         }
     }
-    dfs(&g, vis, node, another) + dfs(&g, vis, another, node)
+    dfs(g, vis, node, another) + dfs(g, vis, another, node)
 }
 
-fn dfs(g: &Vec<Vec<usize>>, vis: &mut Vec<bool>, node: usize, another: usize) -> usize {
+fn dfs(g: &[Vec<usize>], vis: &mut Vec<bool>, node: usize, another: usize) -> usize {
     vis[node] = true;
     let mut max = 0;
     for &nxt in g[node].iter() {

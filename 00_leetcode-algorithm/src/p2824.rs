@@ -14,7 +14,7 @@ pub fn count_pairs1(nums: Vec<i32>, target: i32) -> i32 {
 /// version 2 in O(nlogn)/O(1)
 /// We can sort because of a + b = b + a
 pub fn count_pairs(mut nums: Vec<i32>, target: i32) -> i32 {
-    if nums.len() == 0 {
+    if nums.is_empty() {
         return 0;
     }
     nums.sort();

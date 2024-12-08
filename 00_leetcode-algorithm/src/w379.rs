@@ -3,11 +3,15 @@ pub fn area_of_max_diagonal(dimensions: Vec<Vec<i32>>) -> i32 {
     let mut max_area = 0;
     dimensions.iter().for_each(|v| {
         let diagonal = v[0] * v[0] + v[1] * v[1];
-        if diagonal > max_diagonal {
-            max_diagonal = diagonal;
-            max_area = v[0] * v[1];
-        } else if diagonal == max_diagonal {
-            max_area = max_area.max(v[0] * v[1]);
+        match diagonal.cmp(&max_diagonal) {
+            std::cmp::Ordering::Greater => {
+                max_diagonal = diagonal;
+                max_area = v[0] * v[1];
+            }
+            std::cmp::Ordering::Equal => {
+                max_area = max_area.max(v[0] * v[1]);
+            }
+            _ => {}
         }
     });
     max_area
@@ -16,23 +20,19 @@ pub fn area_of_max_diagonal(dimensions: Vec<Vec<i32>>) -> i32 {
 /// (a, b) rook (c, d) bishop (e, f) queen
 pub fn min_moves_to_capture_the_queen(a: i32, b: i32, c: i32, d: i32, e: i32, f: i32) -> i32 {
     // rook和queen在同一条横线上, 且bishop不在这条横线上或者bishop不在两者中间
-    if a == e && (c != e || is_not_in_middle(d, b, f)) {
-        return 1;
-    }
+    use std::cmp::Ordering;
 
-    // rook和queen在同一条纵线上, 且bishop不在这条纵线上或者bishop不在两者中间
-    if b == f && (d != f || is_not_in_middle(c, a, e)) {
-        return 1;
-    }
-
-    // bishop和queen在同一条斜线上, 且rook不再这条斜线上或者rook不在两者中间
-    if c + d == e + f && (a + b != e + f || is_not_in_middle(a, c, e)) {
-        return 1;
-    }
-
-    // bishop和queen在同一条反斜线上, 且rook不再这条反斜线上或者rook不在两者中间
-    if c - d == e - f && (a - b != e - f || is_not_in_middle(a, c, e)) {
-        return 1;
+    match (
+        a.cmp(&e),
+        b.cmp(&f),
+        (c + d).cmp(&(e + f)),
+        (c - d).cmp(&(e - f)),
+    ) {
+        (Ordering::Equal, _, _, _) if c != e || is_not_in_middle(d, b, f) => return 1,
+        (_, Ordering::Equal, _, _) if d != f || is_not_in_middle(c, a, e) => return 1,
+        (_, _, Ordering::Equal, _) if a + b != e + f || is_not_in_middle(a, c, e) => return 1,
+        (_, _, _, Ordering::Equal) if a - b != e - f || is_not_in_middle(a, c, e) => return 1,
+        _ => {}
     }
 
     2

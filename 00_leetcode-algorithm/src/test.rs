@@ -25,16 +25,16 @@ macro_rules! arr2d_to_vec2d {
 }
 
 #[cfg(test)]
-mod test {
+mod tests {
 
     #[test]
-    fn test1() {
+    fn tests1() {
         let t = arr2d_to_vec2d!([[1, 2, 3], [4, 5, 6]]);
         assert_eq!(t, vec![vec![1, 2, 3], vec![4, 5, 6]]);
     }
 
     #[test]
-    fn test2() {
+    fn tests2() {
         let t = arr_to_vec!([1, 2, 3]);
         assert_eq!(t, vec![1, 2, 3])
     }

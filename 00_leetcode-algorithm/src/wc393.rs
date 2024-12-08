@@ -19,15 +19,13 @@ pub fn find_latest_time(mut s: String) -> String {
             // "?[2-9]"
             bytes[0] = b'0';
         }
-    } else {
-        if bytes[1] == b'?' {
-            if bytes[0] == b'0' {
-                // "0?"
-                bytes[1] = b'9';
-            } else {
-                // "1?"
-                bytes[1] = b'1';
-            }
+    } else if bytes[1] == b'?' {
+        if bytes[0] == b'0' {
+            // "0?"
+            bytes[1] = b'9';
+        } else {
+            // "1?"
+            bytes[1] = b'1';
         }
     }
 
@@ -91,9 +89,9 @@ pub fn find_kth_smallest(coins: Vec<i32>, k: i32) -> i64 {
         let mut cnt = 0i64;
         for mask in (1..(1usize << coins.len())) {
             let mut lcm_res = 1i64;
-            for j in (0..coins.len()) {
+            for (j, &coin) in coins.iter().enumerate() {
                 if mask >> j & 1 == 1 {
-                    lcm_res = lcm(lcm_res, coins[j] as i64);
+                    lcm_res = lcm(lcm_res, coin as i64);
                     if lcm_res > m {
                         break;
                     }
@@ -228,6 +226,7 @@ mod test {
     }
 
     #[test]
+    #[allow(clippy::identity_op)]
     fn test_bit_ops() {
         assert_eq!((-1) & 2, 2);
     }

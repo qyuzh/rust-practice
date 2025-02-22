@@ -78,6 +78,7 @@ pub mod p2390;
 pub mod p2462;
 pub mod p2476;
 pub mod p2477;
+pub mod p2506;
 pub mod p2512;
 pub mod p2520;
 pub mod p2545;

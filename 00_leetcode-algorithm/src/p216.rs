@@ -8,7 +8,7 @@ pub fn combination_sum3(k: i32, n: i32) -> Vec<Vec<i32>> {
         let mut sum = 0;
         let mut res = vec![];
         for i in (0..SHIFT) {
-            if mask >> i & 1 == 1 {
+            if (mask >> i) & 1 == 1 {
                 sum += (i + 1);
                 res.push(i + 1);
             }

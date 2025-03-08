@@ -73,7 +73,7 @@ pub fn lexicographically_smallest_array(nums: Vec<i32>, limit: i32) -> Vec<i32> 
 ///
 /// version 1, get answer in $O(n * \sqrt(k))/O(n)$
 pub fn beautiful_substrings_d(s: String, k: i32) -> i64 {
-    let n = s.as_bytes().len();
+    let n = s.len();
     let mut valid = vec![];
     for i in 0..k {
         if i * i % k == 0 {

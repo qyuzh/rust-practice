@@ -49,3 +49,35 @@ fn get_descendants(root: &Option<Node>, p: &Node, descendants: &mut Vec<Node>) -
         None => false,
     }
 }
+
+pub fn lowest_common_ancestor2(
+    root: Option<Rc<RefCell<TreeNode>>>,
+    p: Option<Rc<RefCell<TreeNode>>>,
+    q: Option<Rc<RefCell<TreeNode>>>,
+) -> Option<Rc<RefCell<TreeNode>>> {
+    fn lca(
+        node: &Option<Rc<RefCell<TreeNode>>>,
+        p: &Option<Rc<RefCell<TreeNode>>>,
+        q: &Option<Rc<RefCell<TreeNode>>>,
+    ) -> Option<Rc<RefCell<TreeNode>>> {
+        if let Some(current) = node {
+            if Rc::ptr_eq(current, p.as_ref()?) || Rc::ptr_eq(current, q.as_ref()?) {
+                return Some(current.clone());
+            }
+
+            let borrowed = current.borrow();
+            let left = lca(&borrowed.left, p, q); // left subtree
+            let right = lca(&borrowed.right, p, q); // right subtree
+
+            return match (left, right) {
+                (Some(_), Some(_)) => Some(current.clone()),
+                (Some(left), None) => Some(left),
+                (None, Some(right)) => Some(right),
+                _ => None,
+            };
+        }
+        None
+    }
+
+    lca(&root, &p, &q)
+}

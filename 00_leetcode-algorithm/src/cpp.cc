@@ -2,6 +2,51 @@
 
 using namespace std;
 
+class Solution3272 {
+  public:
+    long long countGoodIntegers(int n, int k) {
+        auto f = this->factorial(n);
+
+        long long ans = 0;
+        unordered_set<string> us;
+        int base = pow(10, (n - 1) / 2); // n = 4, t = 3 /2 = 1
+        for (int i = base; i < base * 10; ++i) {
+            string s = to_string(i);
+            s += string(s.rbegin() + (n % 2), s.rend());
+
+            if (stoll(s) % k != 0) continue;
+
+            ranges::sort(s);
+            if (!us.insert(s).second) continue;
+
+            ans += this->find_cnt(s, n, f);
+        }
+
+        return ans;
+    }
+
+    vector<int> factorial(int n) {
+        vector<int> f(n + 1);
+        f[0] = 1;
+        for (int i = 1; i <= n; ++i) {
+            f[i] = f[i - 1] * i;
+        }
+        return f;
+    }
+
+    inline long long find_cnt(string &s, int n, vector<int> &f) {
+        int cnt[10]{};
+        for (char c : s) {
+            ++cnt[c - '0'];
+        }
+        int ans = (n - cnt[0]) * f[n - 1];
+        for (auto v : cnt) {
+            ans /= f[v];
+        }
+        return ans;
+    }
+};
+
 class Solution1928 {
     static constexpr int INF = INT_MAX / 2;
 

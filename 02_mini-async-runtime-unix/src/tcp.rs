@@ -11,11 +11,10 @@ use chrono::prelude::*;
 use futures::Stream;
 use socket2::{Domain, Protocol, Socket, Type};
 
-use crate::{reactor::get_reactor, reactor::Reactor};
+use crate::{executor::Executor, log};
 
 #[derive(Debug)]
 pub struct TcpListener {
-    reactor: Weak<RefCell<Reactor>>,
     listener: StdTcpListener,
 }
 
@@ -37,13 +36,13 @@ impl TcpListener {
         sk.bind(&socket2::SockAddr::from(addr))?;
         sk.listen(1024)?;
 
-        let reactor = get_reactor();
-        reactor.borrow_mut().add(sk.as_raw_fd());
+        log!("TcpListener bind with fd {}", sk.as_raw_fd());
 
-        println!("{}: [TCP] bind with fd {}", Local::now(), sk.as_raw_fd());
+        Executor::get_reactor()
+            .borrow_mut()
+            .add_tcp_listener(sk.as_raw_fd());
 
         Ok(Self {
-            reactor: Rc::downgrade(&reactor),
             listener: sk.into(),
         })
     }
@@ -56,15 +55,13 @@ impl Stream for TcpListener {
         self: std::pin::Pin<&mut Self>,
         cx: &mut std::task::Context<'_>,
     ) -> Poll<Option<Self::Item>> {
-        println!("{}: [TCP] try polling", Local::now());
-
         match self.listener.accept() {
             Ok((stream, addr)) => Poll::Ready(Some(Ok((stream.into(), addr)))),
             Err(ref e) if e.kind() == io::ErrorKind::WouldBlock => {
+                log!("TcpListener accept would block");
+
                 // modify reactor to register interest
-                self.reactor
-                    .upgrade()
-                    .unwrap()
+                Executor::get_reactor()
                     .borrow_mut()
                     .modify_readable(self.listener.as_raw_fd(), cx);
 
@@ -82,15 +79,19 @@ pub struct TcpStream {
 
 impl From<StdTcpStream> for TcpStream {
     fn from(stream: StdTcpStream) -> Self {
-        get_reactor().borrow_mut().add(stream.as_raw_fd());
+        Executor::get_reactor()
+            .borrow_mut()
+            .add_tcp_listener(stream.as_raw_fd());
         Self { stream }
     }
 }
 
 impl Drop for TcpStream {
     fn drop(&mut self) {
-        println!("{}: drop", Local::now());
-        get_reactor().borrow_mut().delete(self.stream.as_raw_fd());
+        log!("TcpStream drop {}", self.stream.as_raw_fd());
+        Executor::get_reactor()
+            .borrow_mut()
+            .delete(self.stream.as_raw_fd());
     }
 }
 
@@ -101,39 +102,29 @@ impl tokio::io::AsyncRead for TcpStream {
         buf: &mut tokio::io::ReadBuf<'_>,
     ) -> Poll<io::Result<()>> {
         let fd = self.stream.as_raw_fd();
-        println!("{}: [TCP Stream] read for fd {}", Local::now(), fd);
         let b =
             unsafe { &mut *(buf.unfilled_mut() as *mut [std::mem::MaybeUninit<u8>] as *mut [u8]) };
 
         match self.stream.read(b) {
             Ok(n) => {
-                println!(
-                    "{}: [TCP Stream] read for fd {} done, {}",
-                    Local::now(),
-                    fd,
-                    n
-                );
+                log!("read for fd {} with {} bytes", fd, n);
 
                 buf.advance(n); // the inner buffer has been initialized
 
                 Poll::Ready(Ok(()))
             }
             Err(ref e) if e.kind() == io::ErrorKind::WouldBlock => {
-                println!(
-                    "{}: [TCP Stream] read for fd {} done WouldBlock",
-                    Local::now(),
-                    fd
-                );
+                log!("READ: fd {} WouldBlock", fd);
 
                 // modify reactor to register interest
-                get_reactor()
+                Executor::get_reactor()
                     .borrow_mut()
                     .modify_readable(self.stream.as_raw_fd(), cx);
 
                 Poll::Pending
             }
             Err(e) => {
-                println!("{}: [TCP Stream] read for fd {} done err", Local::now(), fd);
+                log!("read for fd {} err {}", fd, e);
                 Poll::Ready(Err(e))
             }
         }
@@ -149,7 +140,9 @@ impl tokio::io::AsyncWrite for TcpStream {
         match self.stream.write(buf) {
             Ok(n) => Poll::Ready(Ok(n)),
             Err(ref e) if e.kind() == io::ErrorKind::WouldBlock => {
-                get_reactor()
+                log!("WRITE: fd {} WouldBlock", self.stream.as_raw_fd());
+
+                Executor::get_reactor()
                     .borrow_mut()
                     .modify_writable(self.stream.as_raw_fd(), cx);
 

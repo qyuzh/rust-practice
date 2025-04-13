@@ -1,5 +1,5 @@
 use std::{
-    cell::RefCell,
+    cell::{RefCell, RefMut},
     os::unix::prelude::RawFd,
     rc::Rc,
     task::{Context, Waker},
@@ -8,6 +8,8 @@ use std::{
 use chrono::prelude::*;
 use polling::{Event, Poller};
 use rustc_hash::FxHashMap;
+
+use crate::log;
 
 #[derive(Debug)]
 pub struct Reactor {
@@ -25,9 +27,8 @@ impl Reactor {
         }
     }
 
-    // Epoll related
-    pub fn add(&mut self, fd: RawFd) {
-        println!("{}: [reactor] add fd {}", Local::now(), fd);
+    pub fn add_tcp_listener(&mut self, fd: RawFd) {
+        log!("add tcp listener fd={}", fd);
 
         let flags = nix::fcntl::fcntl(fd, nix::fcntl::F_GETFL).unwrap();
         let flags = nix::fcntl::OFlag::from_bits(flags).unwrap();
@@ -40,12 +41,7 @@ impl Reactor {
     }
 
     pub fn modify_readable(&mut self, fd: RawFd, cx: &mut Context) {
-        println!(
-            "{}: [reactor] modify_readable fd {}, token {}",
-            Local::now(),
-            fd,
-            fd * 2
-        );
+        log!("modify_readable for fd={}", fd);
 
         self.push_completion(fd as u64 * 2, cx);
 
@@ -54,12 +50,7 @@ impl Reactor {
     }
 
     pub fn modify_writable(&mut self, fd: RawFd, cx: &mut Context) {
-        println!(
-            "{}: [reactor] modify_writable fd {}, token {}",
-            Local::now(),
-            fd,
-            fd * 2 + 1
-        );
+        log!("modify_writable for fd={}", fd);
 
         self.push_completion(fd as u64 * 2 + 1, cx);
 
@@ -68,17 +59,19 @@ impl Reactor {
     }
 
     pub fn wait(&mut self) {
-        println!("{}: [reactor] waiting", Local::now());
+        log!("waiting for events...");
 
         self.poller.wait(&mut self.buffer, None); // block if no event emits
+
+        println!("\n");
+        log!("{} EVENTS OCCURS", self.buffer.len());
 
         for i in 0..self.buffer.len() {
             let event = self.buffer.swap_remove(0);
             if event.readable {
                 if let Some(waker) = self.waker_mapping.remove(&(event.key as u64 * 2)) {
-                    println!(
-                        "{}: [reactor] fd {}, read waker token {} removed and woken",
-                        Local::now(),
+                    log!(
+                        "event for fd={} occurs, wake task with token {}",
                         event.key,
                         event.key * 2
                     );
@@ -87,9 +80,8 @@ impl Reactor {
             }
             if event.writable {
                 if let Some(waker) = self.waker_mapping.remove(&(event.key as u64 * 2 + 1)) {
-                    println!(
-                        "{}: [reactor] fd {}, write waker token {} removed and woken",
-                        Local::now(),
+                    log!(
+                        "event for fd={} occurs, wake task with token {}",
                         event.key,
                         event.key * 2 + 1
                     );
@@ -100,13 +92,7 @@ impl Reactor {
     }
 
     pub fn delete(&mut self, fd: RawFd) {
-        println!(
-            "{}: [reactor] fd {}, waker token {}, {} removed",
-            Local::now(),
-            fd,
-            fd * 2,
-            fd * 2 + 1
-        );
+        log!("delete fd={} with {} {}", fd, fd * 2, fd * 2 + 1);
 
         self.waker_mapping.remove(&(fd as u64 * 2));
         self.waker_mapping.remove(&(fd as u64 * 2 + 1));
@@ -121,9 +107,4 @@ impl Default for Reactor {
     fn default() -> Self {
         Self::new()
     }
-}
-
-#[inline]
-pub fn get_reactor() -> Rc<RefCell<Reactor>> {
-    crate::executor::EX.with(|ex| ex.reactor.clone())
 }

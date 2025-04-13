@@ -3,13 +3,13 @@ use std::{cell::RefCell, pin::Pin, rc::Rc, task::Context};
 use chrono::prelude::*;
 use futures::{Future, FutureExt};
 
+use crate::log;
+use reactor::Reactor;
 use task::*;
 use task_queue::*;
 
-use crate::reactor::Reactor;
-
+mod reactor;
 mod task;
-
 mod task_queue;
 
 scoped_tls::scoped_thread_local!(pub static EX: Executor);
@@ -27,45 +27,46 @@ impl Executor {
         }
     }
 
+    pub fn get_reactor() -> Rc<RefCell<Reactor>> {
+        EX.with(|ex| ex.reactor.clone())
+    }
+
     pub fn spawn(fut: impl Future<Output = ()> + 'static) {
-        let t = Rc::new(Task {
-            future: RefCell::new(fut.boxed_local()),
-        });
+        let t = Rc::new(Task::new(fut.boxed_local()));
 
         EX.with(|ex| ex.local_queue.push(t));
     }
 
-    pub fn block_on<F, T, O>(&self, f: F) -> O
+    pub fn block_on<F, T>(&self, f: F)
     where
         F: Fn() -> T,
-        T: Future<Output = O> + 'static,
+        T: Future<Output = ()> + 'static,
     {
-        let _waker = waker_fn::waker_fn(|| {});
-        let cx = &mut Context::from_waker(&_waker);
-
         let fut = f();
-        pin_utils::pin_mut!(fut);
+        let fut = Rc::new(Task::new(fut.boxed_local()));
 
-        // for a duration of a closure
         EX.set(self, || {
             loop {
                 // return if the outer future is ready
-                if let std::task::Poll::Ready(t) = fut.as_mut().poll(cx) {
+                if let std::task::Poll::Ready(t) = fut.poll() {
                     break t;
                 }
 
                 // consume all tasks
+                let mut cnt = 0;
                 while let Some(t) = self.local_queue.pop() {
-                    let w = Task::waker(t.clone());
-                    let _wc = w.clone();
-                    let mut context = Context::from_waker(&w);
+                    t.poll();
+                    cnt += 1;
+                }
 
-                    let future = t.future.borrow_mut();
-                    let _ = Pin::new(future).as_mut().poll(&mut context);
+                if cnt > 0 {
+                    log!("executed {} tasks", cnt);
+                } else {
+                    log!("no task to execute");
                 }
 
                 // no task to execute now, it may ready
-                if let std::task::Poll::Ready(t) = fut.as_mut().poll(cx) {
+                if let std::task::Poll::Ready(t) = fut.poll() {
                     break t;
                 }
 

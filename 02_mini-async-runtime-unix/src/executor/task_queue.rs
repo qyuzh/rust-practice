@@ -21,14 +21,10 @@ impl TaskQueue {
     }
 
     pub fn push(&self, runnable: Rc<Task>) {
-        println!("{}: [Task Queue] add task", Local::now());
-
         self.queue.borrow_mut().push_back(runnable);
     }
 
     pub fn pop(&self) -> Option<Rc<Task>> {
-        println!("{}: [Task Queue] try getting task", Local::now());
-
         self.queue.borrow_mut().pop_front()
     }
 }

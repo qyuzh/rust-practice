@@ -1,12 +1,12 @@
 //! Echo example.
 //! Use `nc 127.0.0.1 30000` to connect.
 
-use chrono::prelude::*;
 use futures::StreamExt;
+use mini_async_runtime_unix::log;
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
 
-use mini_async_runtime_unix::executor::Executor;
-use mini_async_runtime_unix::tcp::TcpListener;
+use mini_async_runtime_unix::Executor;
+use mini_async_runtime_unix::TcpListener;
 
 fn main() {
     let ex = Executor::new();
@@ -17,20 +17,22 @@ async fn serve() {
     let mut listener = TcpListener::bind("127.0.0.1:30000").unwrap();
     while let Some(ret) = listener.next().await {
         if let Ok((mut stream, addr)) = ret {
-            println!(
-                "{}: [TCP] accept a new connection from {} successfully",
-                Local::now(),
-                addr
-            );
+            log!("new connection from {}", addr);
             let f = async move {
-                let mut buf = [0; 1024]; // initialize with 0
+                let mut buf = [0; 1024];
                 loop {
                     match stream.read(&mut buf).await {
                         Ok(n) => {
-                            println!("{}: Receive: {:?}", Local::now(), unsafe {
+                            log!("Receive: {:?} from {addr}", unsafe {
                                 String::from_utf8_unchecked(buf[..n].to_vec())
                             });
-                            if n == 0 || stream.write_all(&buf[..n]).await.is_err() {
+
+                            if n == 0 {
+                                log!("Connection closed");
+                                return;
+                            }
+
+                            if stream.write_all(&buf[..n]).await.is_err() {
                                 return;
                             }
                         }

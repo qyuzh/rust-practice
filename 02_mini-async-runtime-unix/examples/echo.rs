@@ -1,6 +1,8 @@
 //! Echo example.
 //! Use `nc 127.0.0.1 30000` to connect.
 
+use std::mem::MaybeUninit;
+
 use futures::StreamExt;
 use mini_async_runtime_unix::log;
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
@@ -19,12 +21,17 @@ async fn serve() {
         if let Ok((mut stream, addr)) = ret {
             log!("new connection from {}", addr);
             let f = async move {
-                let mut buf = [0; 1024];
+                let mut buf: [MaybeUninit<u8>; 1024] =
+                    unsafe { MaybeUninit::uninit().assume_init() };
+
+                let buf =
+                    unsafe { &mut *(&mut buf as *mut [MaybeUninit<u8>; 1024] as *mut [u8; 1024]) };
+
                 loop {
-                    match stream.read(&mut buf).await {
+                    match stream.read(buf).await {
                         Ok(n) => {
                             log!("Receive: {:?} from {addr}", unsafe {
-                                String::from_utf8_unchecked(buf[..n].to_vec())
+                                std::str::from_utf8_unchecked(&buf[..n])
                             });
 
                             if n == 0 {

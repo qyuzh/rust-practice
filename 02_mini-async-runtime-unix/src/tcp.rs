@@ -102,9 +102,8 @@ impl tokio::io::AsyncRead for TcpStream {
         buf: &mut tokio::io::ReadBuf<'_>,
     ) -> Poll<io::Result<()>> {
         let fd = self.stream.as_raw_fd();
-        let b =
-            unsafe { &mut *(buf.unfilled_mut() as *mut [std::mem::MaybeUninit<u8>] as *mut [u8]) };
-
+        let b = unsafe { buf.unfilled_mut() };
+        let b = unsafe { &mut *(b as *mut [std::mem::MaybeUninit<u8>] as *mut [u8]) };
         match self.stream.read(b) {
             Ok(n) => {
                 log!("read for fd {} with {} bytes", fd, n);

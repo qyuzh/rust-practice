@@ -21,11 +21,10 @@ async fn serve() {
         if let Ok((mut stream, addr)) = ret {
             log!("new connection from {}", addr);
             let f = async move {
-                let mut buf: [MaybeUninit<u8>; 1024] =
-                    unsafe { MaybeUninit::uninit().assume_init() };
-
-                let buf =
-                    unsafe { &mut *(&mut buf as *mut [MaybeUninit<u8>; 1024] as *mut [u8; 1024]) };
+                #[rustfmt::skip]
+                let mut buf: [MaybeUninit<u8>; 1024] = unsafe { MaybeUninit::uninit().assume_init() };
+                #[rustfmt::skip]
+                let buf = unsafe { &mut *(&mut buf as *mut [MaybeUninit<u8>; 1024] as *mut [u8; 1024]) };
 
                 loop {
                     match stream.read(buf).await {

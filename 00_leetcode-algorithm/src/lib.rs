@@ -18,6 +18,7 @@ pub mod wc_375;
 pub mod wc_376;
 
 mod common;
+pub mod p1007;
 pub mod p103;
 pub mod p1035;
 pub mod p1038;

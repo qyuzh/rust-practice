@@ -17,6 +17,7 @@ impl<T> SpinLock<T> {
         }
     }
 
+    #[allow(clippy::mut_from_ref)]
     pub fn lock(&self) -> &mut T {
         while self.locked.swap(true, Ordering::Acquire) {
             std::hint::spin_loop();
@@ -24,7 +25,8 @@ impl<T> SpinLock<T> {
         unsafe { &mut *self.value.get() }
     }
 
-    /// SAFETY: The &mut T from lock() must be gone!
+    /// # SAFETY
+    /// The &mut T from lock() must be gone!
     /// (And no cheating by keeping reference to fields of that T around!)
     pub unsafe fn unlock(&self) {
         self.locked.store(false, Ordering::Release)

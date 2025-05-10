@@ -1,4 +1,5 @@
 pub mod arc;
+pub mod arc_swap;
 pub mod spin_lock;
 pub mod vec;
 

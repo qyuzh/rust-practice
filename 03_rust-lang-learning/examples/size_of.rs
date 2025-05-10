@@ -1,4 +1,4 @@
-use std::mem::{size_of, size_of_val};
+use std::mem::{size_of, size_of_val, MaybeUninit};
 
 // assume on 64-bit platform
 fn main() {
@@ -15,4 +15,8 @@ fn main() {
     println!("{}", size_of_val(&reference)); // 8 bytes, reference
     println!("{}", size_of::<Option<i128>>()); // 24 bytes = 16 bytes + 8 bytes discriminant
     println!("{}", size_of::<Option<&i128>>()); // 8 bytes, optimization for reference, no discriminant
+
+    // 2025-04-13
+    println!("{}", size_of::<String>());
+    println!("{}", size_of::<MaybeUninit<String>>());
 }

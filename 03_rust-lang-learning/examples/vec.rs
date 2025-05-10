@@ -6,6 +6,7 @@ use rust_lang_learning::vec::MyVec;
 fn zst() {
     let p = ptr::NonNull::<()>::dangling();
     unsafe {
+        #[allow(clippy::zst_offset)]
         let _p = p.as_ptr().add(1000); // zero-sized offsets are no-ops
         println!("{p:?} == {_p:?}");
         assert_eq!(p.as_ptr(), _p);
@@ -13,6 +14,7 @@ fn zst() {
     unsafe {
         ptr::write(p.as_ptr(), ());
     }
+    #[allow(clippy::let_unit_value)]
     let t = unsafe { ptr::read(p.as_ptr()) };
     println!("{:?}", t);
 }

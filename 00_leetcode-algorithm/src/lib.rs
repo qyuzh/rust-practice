@@ -125,6 +125,7 @@ pub mod p2807;
 pub mod p2824;
 pub mod p2848;
 pub mod p2850;
+pub mod p2918;
 pub mod p2924;
 pub mod p2940;
 pub mod p2952;
